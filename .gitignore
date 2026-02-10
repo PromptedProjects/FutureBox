@@ -1,0 +1,52 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# React Native
+app/android/app/build/
+app/android/.gradle/
+app/android/build/
+app/ios/Pods/
+app/ios/build/
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+
+# Server
+server/dist/
+server/.env
+
+# OS
+os/*.iso
+os/*.img
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# System
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Build
+dist/
+build/
+*.tgz
+
+# Logs
+*.log
+npm-debug.log*
+
+# Coverage
+coverage/
