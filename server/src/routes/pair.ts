@@ -1,0 +1,34 @@
+import type { FastifyInstance } from 'fastify';
+import { z } from 'zod';
+import { createPairingToken, pair } from '../services/auth.service.js';
+
+const pairBodySchema = z.object({
+  token: z.string().min(1),
+  device_name: z.string().optional(),
+});
+
+export async function pairRoutes(app: FastifyInstance): Promise<void> {
+  /** Generate a pairing token (called from the FutureBox device itself) */
+  app.post('/pair/create', async () => {
+    const { token, expiresAt } = createPairingToken();
+    return { ok: true, data: { token, expires_at: new Date(expiresAt).toISOString() } };
+  });
+
+  /** Exchange a pairing token for a session token (called from the companion app) */
+  app.post('/pair', async (request, reply) => {
+    const body = pairBodySchema.safeParse(request.body);
+    if (!body.success) {
+      reply.code(400).send({ ok: false, error: 'Invalid request body' });
+      return;
+    }
+
+    const sessionToken = pair(body.data.token, body.data.device_name);
+
+    if (!sessionToken) {
+      reply.code(401).send({ ok: false, error: 'Invalid or expired pairing token' });
+      return;
+    }
+
+    return { ok: true, data: { session_token: sessionToken } };
+  });
+}
