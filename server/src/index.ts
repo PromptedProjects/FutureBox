@@ -4,6 +4,9 @@ import { buildServer } from './server.js';
 import { initDatabase, closeDatabase } from './storage/database.js';
 import { runMigrations } from './storage/migrations.js';
 import { OllamaProvider } from './providers/ollama.provider.js';
+import { ClaudeProvider } from './providers/claude.provider.js';
+import { OpenAIProvider } from './providers/openai.provider.js';
+import { GeminiProvider } from './providers/gemini.provider.js';
 import { registry } from './providers/provider-registry.js';
 import { Capability } from './providers/provider.interface.js';
 
@@ -31,6 +34,30 @@ async function main() {
     }
   } else {
     logger.warn('Ollama not reachable — local models unavailable');
+  }
+
+  // Cloud providers (register if API keys are set)
+  if (config.ANTHROPIC_API_KEY) {
+    const claude = new ClaudeProvider(config.ANTHROPIC_API_KEY);
+    registry.registerProvider(claude);
+    // Add as fallback for language if Ollama is primary, or primary if no Ollama
+    registry.assign(Capability.Language, 'claude', 'claude-sonnet-4-5-20250929');
+    registry.assign(Capability.Reasoning, 'claude', 'claude-opus-4-6');
+    logger.info('Claude provider registered');
+  }
+
+  if (config.OPENAI_API_KEY) {
+    const openai = new OpenAIProvider(config.OPENAI_API_KEY);
+    registry.registerProvider(openai);
+    registry.assign(Capability.Language, 'openai', 'gpt-4o');
+    logger.info('OpenAI provider registered');
+  }
+
+  if (config.GOOGLE_AI_API_KEY) {
+    const gemini = new GeminiProvider(config.GOOGLE_AI_API_KEY);
+    registry.registerProvider(gemini);
+    registry.assign(Capability.Language, 'gemini', 'gemini-2.0-flash');
+    logger.info('Gemini provider registered');
   }
 
   const app = await buildServer(config, logger);
