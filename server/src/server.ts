@@ -3,6 +3,7 @@ import cors from '@fastify/cors';
 import type { Config } from './config.js';
 import type { Logger } from './utils/logger.js';
 import { pairRoutes } from './routes/pair.js';
+import { modelRoutes } from './routes/models.js';
 import { requireAuth } from './middleware/auth.middleware.js';
 
 export async function buildServer(config: Config, logger: Logger) {
@@ -34,6 +35,9 @@ export async function buildServer(config: Config, logger: Logger) {
       ok: true,
       data: { session_id: request.sessionId },
     }));
+
+    // Model routes
+    await protectedScope.register(modelRoutes);
   });
 
   return app;
