@@ -10,10 +10,11 @@ Control your Windows PC from your phone. AI chat, remote terminal, file browser,
 │  (Your Phone)    │  WiFi   │   (Windows PC)        │
 │                  │  WS/HTTP│                        │
 │  - AI Chat       │         │  - Multi-Model AI      │
-│  - Terminal      │         │  - Shell Execution     │
-│  - File Browser  │         │  - File System Access  │
-│  - Actions       │         │  - TTS / STT           │
-│  - Settings      │         │  - Permission System   │
+│  - Terminal      │         │  - AI Tool Execution   │
+│  - File Browser  │         │  - Persistent PTY      │
+│  - Actions       │         │  - File System Access  │
+│  - Settings      │         │  - TTS / STT           │
+│                  │         │  - Permission System   │
 └──────────────────┘         └──────────────────────┘
 ```
 
@@ -21,8 +22,8 @@ Control your Windows PC from your phone. AI chat, remote terminal, file browser,
 
 ## Features
 
-- **AI Chat** — Multi-provider support (Ollama local, Claude, OpenAI, Gemini) with streaming responses, conversation history, and image input
-- **Remote Terminal** — Execute shell commands on your PC from your phone with multi-tab support and real-time output
+- **AI Chat + Tool Calling** — Multi-provider support (Ollama local, Claude, OpenAI, Gemini) with streaming responses, conversation history, and image input. The AI can execute real actions on your PC — open URLs, read clipboard, control volume, take screenshots, launch apps — via native function calling (not just text descriptions)
+- **Remote Terminal** — Full interactive terminal on your phone via xterm.js + node-pty. Persistent PTY shells over WebSocket with colors, cursor movement, and TUI support. Run Claude Code, vim, or any CLI tool directly from your phone — no VPS or SSH needed
 - **File Browser** — Navigate your PC's file system, preview text files, copy file paths to clipboard
 - **Action Permissions** — Three-tier approval system (red/yellow/green) with trust rules for automation
 - **Voice I/O** — Speech-to-text (Whisper) and text-to-speech (OpenAI TTS)
@@ -150,6 +151,42 @@ All endpoints except `/status` and `/pair/*` require `Authorization: Bearer <tok
 | `POST` | `/transcribe` | Speech-to-text |
 | `POST` | `/tts` | Text-to-speech |
 
+## AI Tool Calling
+
+When you chat with the AI, it doesn't just describe what it would do — it actually does it. The AI calls tools on your PC through OpenAI/Claude native function calling.
+
+**Available tools:**
+| Skill | Actions | Tier |
+|---|---|---|
+| `clipboard` | read, write | Green |
+| `browser` | open URL, navigate, screenshot, eval | Green/Yellow |
+| `audio` | get/set volume, mute/unmute | Green |
+| `screen` | capture screenshot | Green |
+| `notifications` | send desktop notification | Green |
+| `process` | list, launch, kill | Green/Yellow/Red |
+| `power` | lock, sleep, shutdown, restart | Yellow/Red |
+| `system` | run shell command | Red |
+
+**Tier-based approval:**
+- **Green** — auto-executes immediately (safe, read-only or low-risk)
+- **Yellow** — sends approval request to your phone, waits for you to approve/deny
+- **Red** — always requires manual approval (destructive or high-risk)
+
+Trust rules can auto-approve specific yellow-tier actions you use frequently.
+
+## Remote Terminal Architecture
+
+The terminal uses a real PTY (pseudo-terminal) on your PC, not one-off shell commands:
+
+```
+Phone (xterm.js in WebView)  ←— WebSocket —→  Server (node-pty)  ←→  PowerShell/Bash
+```
+
+- **Persistent sessions** — each tab maintains its own shell process that stays alive across commands
+- **Full terminal emulation** — ANSI colors, cursor positioning, scrollback, resize events
+- **TUI support** — interactive programs like Claude Code, vim, htop work correctly
+- **Multi-tab** — open multiple independent shell sessions
+
 ## Security Notes
 
 - Session tokens are SHA-256 hashed before storage — raw tokens are never persisted
@@ -163,8 +200,8 @@ All endpoints except `/status` and `/pair/*` require `Authorization: Bearer <tok
 
 ## Tech Stack
 
-**Server**: Node.js 23, Fastify 5, TypeScript, SQLite, Zod, Pino
-**App**: React Native 0.81, Expo SDK 54, Zustand, TypeScript
+**Server**: Node.js 23, Fastify 5, TypeScript, SQLite, Zod, Pino, node-pty
+**App**: React Native 0.81, Expo SDK 54, Zustand, TypeScript, xterm.js, react-native-webview
 **AI**: Ollama, Anthropic Claude, OpenAI, Google Gemini
 
 ## License
