@@ -64,7 +64,9 @@ async function main() {
 
   // TLS setup
   let serverOpts: ServerOptions | undefined;
-  if (config.TLS_CERT_PATH && config.TLS_KEY_PATH) {
+  if (config.DISABLE_TLS) {
+    logger.info('TLS disabled — running plain HTTP');
+  } else if (config.TLS_CERT_PATH && config.TLS_KEY_PATH) {
     const certs = loadTLSCerts(config.TLS_KEY_PATH, config.TLS_CERT_PATH);
     serverOpts = { https: certs };
     logger.info('TLS enabled (custom certs)');

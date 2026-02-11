@@ -19,6 +19,7 @@ app/ios/build/
 # Server
 server/dist/
 server/.env
+server/data/
 
 # OS
 os/*.iso

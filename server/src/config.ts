@@ -10,6 +10,7 @@ const envSchema = z.object({
   GOOGLE_AI_API_KEY: z.string().optional(),
   TLS_CERT_PATH: z.string().optional(),
   TLS_KEY_PATH: z.string().optional(),
+  DISABLE_TLS: z.coerce.boolean().default(false),
   RATE_LIMIT_MAX: z.coerce.number().int().positive().default(100),
   RATE_LIMIT_WINDOW_MS: z.coerce.number().int().positive().default(60_000),
   DATA_DIR: z.string().default('./data'),

@@ -1,8 +1,9 @@
 import type { FastifyInstance } from 'fastify';
 import { validateSession } from '../services/auth.service.js';
 import { wsManager } from '../ws/ws-manager.js';
-import { createWSMessage, type WSMessage, type ChatSendPayload, type ActionDecisionPayload } from '../ws/ws-protocol.js';
+import { createWSMessage, type WSMessage, type ChatSendPayload, type ActionDecisionPayload, type ShellExecPayload, type ShellInputPayload, type ShellKillPayload } from '../ws/ws-protocol.js';
 import { handleChatSend, handleChatCancel } from '../ws/handlers/chat.handler.js';
+import { handleShellExec, handleShellInput, handleShellKill, cleanupShells } from '../ws/handlers/shell.handler.js';
 import { handleApprove, handleDeny } from '../services/action.service.js';
 
 export async function wsRoutes(app: FastifyInstance): Promise<void> {
@@ -58,6 +59,15 @@ export async function wsRoutes(app: FastifyInstance): Promise<void> {
           })));
           break;
         }
+        case 'shell.exec':
+          handleShellExec(sessionId, msg.id, msg.payload as ShellExecPayload);
+          break;
+        case 'shell.input':
+          handleShellInput(sessionId, msg.payload as ShellInputPayload);
+          break;
+        case 'shell.kill':
+          handleShellKill(sessionId, msg.payload as ShellKillPayload);
+          break;
         case 'ping':
           socket.send(JSON.stringify(createWSMessage('pong', msg.id, {})));
           break;
@@ -67,6 +77,7 @@ export async function wsRoutes(app: FastifyInstance): Promise<void> {
     });
 
     socket.on('close', () => {
+      cleanupShells(sessionId);
       wsManager.remove(sessionId);
       request.log.info(`WebSocket disconnected: ${sessionId}`);
     });

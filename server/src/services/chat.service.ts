@@ -76,6 +76,7 @@ export async function sendMessage(
 export async function* streamMessage(
   conversationId: string | undefined,
   userContent: string,
+  images?: string[],
 ): AsyncGenerator<{ type: 'token'; data: string } | { type: 'done'; data: SendMessageResult }> {
   const convId = conversationId ?? nanoid();
   if (!conversationId) {
@@ -92,7 +93,14 @@ export async function* streamMessage(
   const history = listMessages(convId, 50);
   const messages: ChatMessage[] = [
     { role: 'system', content: SYSTEM_PROMPT },
-    ...history.map((m) => ({ role: m.role, content: m.content })),
+    ...history.map((m, i) => {
+      const msg: ChatMessage = { role: m.role, content: m.content };
+      // Attach images to the last user message (current one)
+      if (i === history.length - 1 && m.role === 'user' && images?.length) {
+        msg.images = images;
+      }
+      return msg;
+    }),
   ];
 
   // Stream from AI

@@ -27,6 +27,22 @@ export class OpenAIProvider implements LLMProvider {
     ];
   }
 
+  private formatMessages(messages: ChatMessage[]): any[] {
+    return messages.map((m) => {
+      if (m.images?.length) {
+        const content: any[] = [{ type: 'text', text: m.content }];
+        for (const img of m.images) {
+          content.push({
+            type: 'image_url',
+            image_url: { url: `data:image/jpeg;base64,${img}` },
+          });
+        }
+        return { role: m.role, content };
+      }
+      return { role: m.role, content: m.content };
+    });
+  }
+
   async chat(model: string, messages: ChatMessage[]): Promise<ChatResponse> {
     const response = await fetch(`${this.baseUrl}/chat/completions`, {
       method: 'POST',
@@ -36,7 +52,7 @@ export class OpenAIProvider implements LLMProvider {
       },
       body: JSON.stringify({
         model,
-        messages: messages.map((m) => ({ role: m.role, content: m.content })),
+        messages: this.formatMessages(messages),
       }),
     });
 
@@ -62,7 +78,7 @@ export class OpenAIProvider implements LLMProvider {
       body: JSON.stringify({
         model,
         stream: true,
-        messages: messages.map((m) => ({ role: m.role, content: m.content })),
+        messages: this.formatMessages(messages),
       }),
     });
 

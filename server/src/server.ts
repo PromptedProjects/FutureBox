@@ -11,6 +11,9 @@ import { historyRoutes } from './routes/history.js';
 import { wsRoutes } from './routes/ws.js';
 import { actionRoutes } from './routes/actions.js';
 import { configRoutes } from './routes/config.js';
+import { transcribeRoutes } from './routes/transcribe.js';
+import { ttsRoutes } from './routes/tts.js';
+import { filesRoutes } from './routes/files.js';
 import { requireAuth } from './middleware/auth.middleware.js';
 import { errorHandler } from './middleware/error-handler.middleware.js';
 import { getSystemStatus } from './services/status.service.js';
@@ -78,6 +81,15 @@ export async function buildServer(config: Config, logger: Logger, opts?: ServerO
 
     // Config routes
     await protectedScope.register(configRoutes);
+
+    // Transcription routes
+    await protectedScope.register(transcribeRoutes);
+
+    // TTS routes
+    await protectedScope.register(ttsRoutes);
+
+    // Files routes
+    await protectedScope.register(filesRoutes);
   });
 
   return app;

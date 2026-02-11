@@ -1,0 +1,88 @@
+{
+  "expo": {
+    "name": "FutureBox",
+    "slug": "futurebox",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "newArchEnabled": true,
+    "scheme": "futurebox",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0a0a0a"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.futurebox.app",
+      "infoPlist": {
+        "NSCameraUsageDescription": "FutureBox uses the camera to scan QR codes and take photos to send to your AI.",
+        "NSMicrophoneUsageDescription": "FutureBox uses the microphone for voice input to your AI assistant.",
+        "NSPhotoLibraryUsageDescription": "FutureBox needs photo library access to send images to your AI.",
+        "NSPhotoLibraryAddUsageDescription": "FutureBox can save images to your photo library.",
+        "NSFaceIDUsageDescription": "FutureBox uses Face ID to secure access to your device.",
+        "NSLocalNetworkUsageDescription": "FutureBox connects to your local server over the network.",
+        "NSDocumentsFolderUsageDescription": "FutureBox can attach files from your documents."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#0a0a0a"
+      },
+      "edgeToEdgeEnabled": true,
+      "package": "com.futurebox.app",
+      "permissions": [
+        "CAMERA",
+        "RECORD_AUDIO",
+        "READ_MEDIA_IMAGES",
+        "READ_MEDIA_VIDEO",
+        "READ_MEDIA_AUDIO",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE",
+        "ACCESS_NETWORK_STATE",
+        "ACCESS_WIFI_STATE",
+        "VIBRATE",
+        "USE_BIOMETRIC",
+        "USE_FINGERPRINT",
+        "WAKE_LOCK",
+        "FOREGROUND_SERVICE",
+        "RECEIVE_BOOT_COMPLETED"
+      ]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-secure-store",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "FutureBox uses the camera to scan QR codes and take photos to send to your AI.",
+          "microphonePermission": "FutureBox uses the microphone for voice input."
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "FutureBox needs photo library access to send images to your AI.",
+          "cameraPermission": "FutureBox uses the camera to take photos to send to your AI."
+        }
+      ],
+      [
+        "expo-audio",
+        {
+          "microphonePermission": "FutureBox uses the microphone for voice input to your AI assistant."
+        }
+      ],
+      [
+        "expo-document-picker",
+        {
+          "iCloudContainerEnvironment": "Production"
+        }
+      ],
+      "expo-local-authentication"
+    ]
+  }
+}

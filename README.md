@@ -1,66 +1,172 @@
-# FutureBox
+# FutureBoxWindows
 
-**Your AI lives in a box. You talk to it from your phone.**
+Control your Windows PC from your phone. AI chat, remote terminal, file browser, and action approvals — all from a companion app over your local network.
 
-FutureBox turns any old laptop or Android phone into a private, local AI server. The companion app **FutureBuddy** lets you chat, run a terminal, view the desktop, and manage everything from your phone.
-
-## Architecture
+## What It Does
 
 ```
-┌─────────────────┐         ┌──────────────────────┐
-│   FutureBuddy   │◄──────►│      FutureBox        │
-│   (Phone App)   │  WiFi   │   (Old Laptop/Phone)  │
-│                 │  WSS    │                        │
-│  - Chat         │         │  - AI Model Router     │
-│  - Terminal     │         │  - Language Model      │
-│  - Desktop      │         │  - Vision Model        │
-│  - Approvals    │         │  - Speech (STT/TTS)    │
-│  - Settings     │         │  - Reasoning Model     │
-└─────────────────┘         │  - VNC Server          │
-                            │  - SSH Server          │
-                            │  - Permission System   │
-                            └──────────────────────┘
+┌──────────────────┐         ┌──────────────────────┐
+│  FutureBox App   │◄──────►│   FutureBox Server    │
+│  (Your Phone)    │  WiFi   │   (Windows PC)        │
+│                  │  WS/HTTP│                        │
+│  - AI Chat       │         │  - Multi-Model AI      │
+│  - Terminal      │         │  - Shell Execution     │
+│  - File Browser  │         │  - File System Access  │
+│  - Actions       │         │  - TTS / STT           │
+│  - Settings      │         │  - Permission System   │
+└──────────────────┘         └──────────────────────┘
 ```
 
-## Multi-Model AI Router
+**Server** runs on your Windows PC (Node.js). **App** runs on any phone (React Native / Expo).
 
-FutureBox doesn't lock you into one AI. Each capability routes to the model you choose:
+## Features
 
-| Capability | Local (Free) | Cloud (Your API Key) |
-|---|---|---|
-| Language | Phi-3 Mini / Mistral 7B | Claude, GPT-4, Gemini |
-| Reasoning | Mistral 7B / Llama 3 | Claude Opus, o1 |
-| Vision | LLaVA / Moondream | Claude Opus, GPT-4V |
-| Speech-to-Text | Whisper | Deepgram, Google STT |
-| Text-to-Speech | Piper TTS | ElevenLabs, Google TTS |
+- **AI Chat** — Multi-provider support (Ollama local, Claude, OpenAI, Gemini) with streaming responses, conversation history, and image input
+- **Remote Terminal** — Execute shell commands on your PC from your phone with multi-tab support and real-time output
+- **File Browser** — Navigate your PC's file system, preview text files, copy file paths to clipboard
+- **Action Permissions** — Three-tier approval system (red/yellow/green) with trust rules for automation
+- **Voice I/O** — Speech-to-text (Whisper) and text-to-speech (OpenAI TTS)
+- **System Monitoring** — Live CPU, RAM, disk, and network stats
+- **Secure Pairing** — QR code or manual token pairing with hashed session tokens
+- **WebSocket** — Real-time bidirectional communication for chat streaming, shell output, and notifications
 
-All-local by default. Add API keys to upgrade any capability.
+## Quick Start
+
+### Prerequisites
+
+- **Windows PC**: Node.js 23+ installed
+- **Phone**: [Expo Go](https://expo.dev/go) app installed
+- Both devices on the same WiFi network
+
+### 1. Start the Server
+
+```bash
+cd server
+cp .env.example .env    # Edit .env to add your API keys
+npm install
+DISABLE_TLS=true npm run dev
+```
+
+The server starts on `http://0.0.0.0:3737`. Note your PC's local IP (e.g. `ipconfig` → look for your WiFi adapter's IPv4).
+
+### 2. Start the App
+
+```bash
+cd app
+npm install
+npx expo start
+```
+
+Scan the QR code with Expo Go on your phone.
+
+### 3. Pair
+
+1. On the server, the pairing token is logged on startup, or use the test script:
+   ```bash
+   # Edit scripts/test-app.sh — set HOST to your PC's IP
+   bash scripts/test-app.sh
+   ```
+2. In the app, tap **Manual** and enter your PC's IP:port and the pairing token
+3. Done — you're connected
 
 ## Project Structure
 
 ```
-FutureBox/
-├── app/          # FutureBuddy - React Native companion app
-├── server/       # FutureBox API server (Node.js)
-├── os/           # Ubuntu installer scripts & configs
-├── scripts/      # Utility scripts (ADB debloat, etc.)
-├── docs/         # Documentation & master checklist
-└── branding/     # Logo, colors, assets
+FutureBoxWindows/
+├── server/              # Fastify + TypeScript API server
+│   ├── src/
+│   │   ├── routes/      # HTTP endpoints (chat, files, config, etc.)
+│   │   ├── services/    # Business logic (AI, files, actions, etc.)
+│   │   ├── providers/   # AI model providers (Ollama, Claude, OpenAI, Gemini)
+│   │   ├── ws/          # WebSocket handlers (chat streaming, shell, notifications)
+│   │   ├── storage/     # SQLite database + migrations
+│   │   ├── middleware/   # Auth, error handling
+│   │   └── utils/       # Logger, TLS, helpers
+│   └── .env.example     # Configuration template
+├── app/                 # React Native + Expo SDK 54
+│   └── src/
+│       ├── screens/     # Chat, Terminal, Files, Actions, Settings
+│       ├── components/  # Reusable UI components
+│       ├── hooks/       # Custom React hooks
+│       ├── services/    # API client, WebSocket manager, storage
+│       ├── stores/      # Zustand state management
+│       ├── types/       # TypeScript types
+│       └── theme/       # Colors and tokens
+├── scripts/             # Test and utility scripts
+└── docs/                # Documentation
 ```
 
-## Key Decisions
+## Configuration
 
-- **App**: React Native (bare) — "FutureBuddy"
-- **OS**: Ubuntu Server 24.04 LTS
-- **Remote Desktop**: TigerVNC
-- **License**: Apache 2.0
-- **AI**: Multi-model capability router
-- **Revenue**: Free forever — hardware sales later
+All server config is in `server/.env` (copy from `.env.example`):
 
-## Getting Started
+| Variable | Default | Description |
+|---|---|---|
+| `PORT` | `3737` | Server port |
+| `HOST` | `0.0.0.0` | Bind address |
+| `DISABLE_TLS` | (unset) | Set `true` for plain HTTP (recommended for local dev) |
+| `OLLAMA_HOST` | `http://127.0.0.1:11434` | Local Ollama instance |
+| `ANTHROPIC_API_KEY` | (empty) | Enables Claude models |
+| `OPENAI_API_KEY` | (empty) | Enables GPT-4o + TTS + STT |
+| `GOOGLE_AI_API_KEY` | (empty) | Enables Gemini models |
 
-Coming soon. See [docs/CHECKLIST.md](docs/CHECKLIST.md) for the full build plan.
+## AI Providers
+
+FutureBox routes each AI capability to the best available provider:
+
+| Capability | Local (Ollama) | Cloud |
+|---|---|---|
+| Language | Any local model | Claude Sonnet, GPT-4o, Gemini Flash |
+| Reasoning | — | Claude Opus |
+| Speech-to-Text | — | OpenAI Whisper |
+| Text-to-Speech | — | OpenAI TTS |
+
+All-local by default if Ollama is running. Add API keys to enable cloud providers.
+
+## API Endpoints
+
+All endpoints except `/status` and `/pair/*` require `Authorization: Bearer <token>`.
+
+| Method | Path | Description |
+|---|---|---|
+| `GET` | `/status` | Server health + system stats |
+| `POST` | `/pair/create` | Generate pairing token |
+| `POST` | `/pair` | Exchange token for session |
+| `GET` | `/me` | Verify auth |
+| `GET` | `/models` | List available AI models |
+| `GET` | `/models/slots` | Current capability assignments |
+| `POST` | `/chat` | Send chat message |
+| `GET` | `/conversations` | List conversations |
+| `GET` | `/conversations/:id/messages` | Get messages |
+| `GET` | `/files/list?path=...` | List directory contents |
+| `GET` | `/files/read?path=...` | Read text file (max 500KB) |
+| `GET` | `/pending` | Pending actions |
+| `POST` | `/approve/:id` | Approve action |
+| `POST` | `/deny/:id` | Deny action |
+| `GET` | `/trust-rules` | List trust rules |
+| `POST` | `/trust-rules` | Create trust rule |
+| `GET` | `/config` | Get all config |
+| `PUT` | `/config` | Set config value |
+| `POST` | `/transcribe` | Speech-to-text |
+| `POST` | `/tts` | Text-to-speech |
+
+## Security Notes
+
+- Session tokens are SHA-256 hashed before storage — raw tokens are never persisted
+- Pairing tokens expire after 15 minutes
+- File access is restricted to drive roots and user directories
+- The action permission system gates dangerous operations with three tiers:
+  - **Red** — always requires manual approval (destructive ops)
+  - **Yellow** — requires approval unless a trust rule auto-approves
+  - **Green** — auto-approved by default
+- For local development, use `DISABLE_TLS=true`. For production, the server auto-generates self-signed TLS certs or you can provide your own
+
+## Tech Stack
+
+**Server**: Node.js 23, Fastify 5, TypeScript, SQLite, Zod, Pino
+**App**: React Native 0.81, Expo SDK 54, Zustand, TypeScript
+**AI**: Ollama, Anthropic Claude, OpenAI, Google Gemini
 
 ## License
 
-Apache 2.0 — see [LICENSE](LICENSE)
+Apache 2.0
