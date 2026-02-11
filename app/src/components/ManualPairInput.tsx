@@ -17,7 +17,7 @@ export default function ManualPairInput({ onSubmit, loading }: ManualPairInputPr
   return (
     <View style={styles.container}>
       <Text style={styles.description}>
-        Enter the FutureBox host and pairing token manually.
+        Enter the FutureBuddy host and pairing token manually.
       </Text>
 
       <View style={styles.fieldGroup}>

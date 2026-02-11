@@ -38,7 +38,7 @@ export function sendDesktopNotification(notification: DesktopNotification): void
       $xml = New-Object Windows.Data.Xml.Dom.XmlDocument
       $xml.LoadXml($template)
       $toast = [Windows.UI.Notifications.ToastNotification]::new($xml)
-      [Windows.UI.Notifications.ToastNotificationManager]::CreateToastNotifier('FutureBox').Show($toast)
+      [Windows.UI.Notifications.ToastNotificationManager]::CreateToastNotifier('FutureBuddy').Show($toast)
     `;
     execSync(`powershell -NoProfile -Command "${script.replace(/\n/g, ' ')}"`, {
       timeout: 10000,

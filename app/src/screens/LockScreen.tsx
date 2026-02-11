@@ -11,7 +11,7 @@ export default function LockScreen({ onUnlock }: LockScreenProps) {
   return (
     <View style={styles.container}>
       <Feather name="lock" size={64} color={colors.accent} />
-      <Text style={styles.title}>FutureBox Locked</Text>
+      <Text style={styles.title}>FutureBuddy Locked</Text>
       <Text style={styles.subtitle}>Authenticate to unlock the app.</Text>
       <Btn
         backgroundColor={colors.accent}

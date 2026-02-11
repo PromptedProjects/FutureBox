@@ -7,7 +7,7 @@ Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
 
 $notifyIcon = New-Object System.Windows.Forms.NotifyIcon
-$notifyIcon.Text = "FutureBox"
+$notifyIcon.Text = "FutureBuddy"
 $notifyIcon.Visible = $true
 
 # Create a simple icon (green circle)
@@ -20,7 +20,7 @@ $notifyIcon.Icon = [System.Drawing.Icon]::FromHandle($bitmap.GetHicon())
 # Context menu
 $contextMenu = New-Object System.Windows.Forms.ContextMenuStrip
 
-$statusItem = $contextMenu.Items.Add("FutureBox - Running")
+$statusItem = $contextMenu.Items.Add("FutureBuddy - Running")
 $statusItem.Enabled = $false
 
 $contextMenu.Items.Add("-") | Out-Null

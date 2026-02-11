@@ -1,23 +1,23 @@
 [Unit]
-Description=FutureBox API Server
+Description=FutureBuddy API Server
 After=network.target ollama.service
 Wants=ollama.service
 
 [Service]
 Type=simple
-User=futurebox
-WorkingDirectory=/opt/futurebox/server
+User=futurebuddy
+WorkingDirectory=/opt/futurebuddy/server
 ExecStart=/usr/bin/node dist/index.js
 Restart=always
 RestartSec=5
 Environment=NODE_ENV=production
-Environment=DATA_DIR=/opt/futurebox/data
+Environment=DATA_DIR=/opt/futurebuddy/data
 
 # Security hardening
 NoNewPrivileges=true
 ProtectSystem=strict
 ProtectHome=true
-ReadWritePaths=/opt/futurebox/data
+ReadWritePaths=/opt/futurebuddy/data
 PrivateTmp=true
 
 [Install]

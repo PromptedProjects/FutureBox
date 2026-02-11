@@ -19,7 +19,7 @@ export function initDatabase(dataDir: string, logger: Logger): DatabaseSync {
     logger.info(`Created data directory: ${dataDir}`);
   }
 
-  const dbPath = join(dataDir, 'futurebox.db');
+  const dbPath = join(dataDir, 'futurebuddy.db');
   db = new DatabaseSync(dbPath);
 
   // Performance pragmas for local-only SQLite

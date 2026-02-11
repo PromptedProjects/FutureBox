@@ -22,7 +22,7 @@ export class SlackChannel implements ChannelAdapter {
       });
 
       this.app.message(async ({ say }: { message: unknown; say: (m: string) => Promise<void> }) => {
-        await say('[FutureBox] Message received. Processing...');
+        await say('[FutureBuddy] Message received. Processing...');
       });
 
       await this.app.start();

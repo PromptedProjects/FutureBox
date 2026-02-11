@@ -14,7 +14,7 @@ import { getAction } from '../storage/repositories/action.repository.js';
 
 const MAX_TOOL_ROUNDS = 10;
 
-const BASE_SYSTEM_PROMPT = `You are FutureBox, a personal AI assistant running on your owner's local machine (Windows PC). You have direct access to the host system through tools.
+const BASE_SYSTEM_PROMPT = `You are FutureBuddy, a personal AI assistant running on your owner's local machine (Windows PC). You have direct access to the host system through tools.
 
 CRITICAL RULES:
 - When the user asks you to DO something (open a URL, check clipboard, set volume, take a screenshot, run a command, etc.), ALWAYS call the appropriate tool. NEVER just describe what you would do.

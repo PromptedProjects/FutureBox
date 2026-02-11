@@ -1,4 +1,4 @@
-# FutureBox — Master Build Checklist
+# FutureBuddy — Master Build Checklist
 
 ## How to use this document
 Feed this entire document into Claude Code. Work through it section by section. Each task is small enough to complete in one session. Check off tasks as you go. Tasks marked [BLOCKER] must be done before moving to the next section.
@@ -15,7 +15,7 @@ Feed this entire document into Claude Code. Work through it section by section. 
 - [ ] Install Docker (for testing OS image builds)
 - [ ] Install Balena Etcher or Ventoy (for creating bootable USB)
 - [ ] Install Claude Code CLI
-- [ ] Set up Git repository (private) for FutureBox project
+- [ ] Set up Git repository (private) for FutureBuddy project
 - [ ] Create project folder structure: /app, /os, /docs, /scripts, /branding
 - [ ] Set up .gitignore for all platforms
 
@@ -33,9 +33,9 @@ Feed this entire document into Claude Code. Work through it section by section. 
 - [ ] Create a throwaway Google account for test devices
 - [ ] Create a Telegram bot via BotFather (for chat interface testing)
 - [ ] Get a free Gemini API key from Google AI Studio (for initial LLM testing)
-- [ ] Get an Anthropic API key (optional, for Claude-powered FutureBox)
-- [ ] Create GitHub organization for FutureBox
-- [ ] Register domain: futurebox.ai (or alternative)
+- [ ] Get an Anthropic API key (optional, for Claude-powered FutureBuddy)
+- [ ] Create GitHub organization for FutureBuddy
+- [ ] Register domain: futurebuddy.ai (or alternative)
 - [ ] Set up basic landing page (even a single page with email capture)
 
 ---
@@ -53,7 +53,7 @@ Feed this entire document into Claude Code. Work through it section by section. 
 - [ ] Research Wake-on-LAN for remote power management
 
 ### Core Installer Script
-- [ ] [BLOCKER] Write master install script: `install-futurebox.sh`
+- [ ] [BLOCKER] Write master install script: `install-futurebuddy.sh`
 - [ ] Script: Detect hardware (CPU, RAM, GPU, storage) and log specs
 - [ ] Script: Update system packages (apt update && apt upgrade -y)
 - [ ] Script: Install core dependencies (build-essential, python3, pip, etc.)
@@ -65,10 +65,10 @@ Feed this entire document into Claude Code. Work through it section by section. 
 - [ ] Script: Install OpenClaw via npm
 - [ ] Script: Configure OpenClaw for headless operation
 - [ ] Script: Install and configure UFW firewall (allow SSH, VNC, OpenClaw ports only)
-- [ ] Script: Install and configure Avahi/mDNS (so device is discoverable as futurebox.local)
-- [ ] Script: Configure auto-login to a dedicated futurebox user
+- [ ] Script: Install and configure Avahi/mDNS (so device is discoverable as futurebuddy.local)
+- [ ] Script: Configure auto-login to a dedicated futurebuddy user
 - [ ] Script: Create systemd services for: SSH, VNC, Ollama, OpenClaw (all auto-start on boot)
-- [ ] Script: Set hostname to "futurebox"
+- [ ] Script: Set hostname to "futurebuddy"
 - [ ] Script: Disable screen sleep/suspend/hibernate
 - [ ] Script: Disable lid-close suspend (laptop stays on when closed)
 - [ ] Script: Configure automatic security updates (unattended-upgrades)
@@ -79,12 +79,12 @@ Feed this entire document into Claude Code. Work through it section by section. 
 - [ ] Test script idempotency (running it twice doesn't break anything)
 - [ ] Write error handling for each step (if a step fails, log it and continue)
 
-### FutureBox API Server
-- [ ] [BLOCKER] Design the FutureBox API specification (JSON over WebSocket)
+### FutureBuddy API Server
+- [ ] [BLOCKER] Design the FutureBuddy API specification (JSON over WebSocket)
 - [ ] Define API endpoints: /chat, /status, /approve, /deny, /history, /config
 - [ ] Define notification payload format (type, tier, title, body, actions)
 - [ ] Define pairing handshake protocol (QR code → token exchange → encrypted channel)
-- [ ] Build lightweight API server in Node.js (runs on the FutureBox device)
+- [ ] Build lightweight API server in Node.js (runs on the FutureBuddy device)
 - [ ] API: /pair — accepts pairing token, returns session key
 - [ ] API: /chat — sends message to AI, streams response back
 - [ ] API: /status — returns device stats (CPU, RAM, uptime, AI model loaded, active tasks)
@@ -92,7 +92,7 @@ Feed this entire document into Claude Code. Work through it section by section. 
 - [ ] API: /approve — approves a pending action
 - [ ] API: /deny — denies a pending action
 - [ ] API: /pending — returns list of actions awaiting approval
-- [ ] API: /config — get/set FutureBox configuration
+- [ ] API: /config — get/set FutureBuddy configuration
 - [ ] API: /models — list available AI models, switch active model
 - [ ] API: /skills — list installed OpenClaw skills
 - [ ] API: WebSocket connection for real-time chat streaming and push notifications
@@ -121,7 +121,7 @@ Feed this entire document into Claude Code. Work through it section by section. 
 ### Disposable Email System (Backend)
 - [ ] Research options: SimpleLogin API, AnonAddy API, self-hosted mail server, or catch-all domain
 - [ ] Decide approach (recommend: catch-all domain with alias generation — simplest)
-- [ ] Build alias generator (random-string@futurebox-mail.com format)
+- [ ] Build alias generator (random-string@futurebuddy-mail.com format)
 - [ ] Build alias manager: create, list, pause, delete aliases
 - [ ] API endpoint: /aliases — CRUD for email aliases
 - [ ] Route incoming mail to AI inbox (OpenClaw reads and processes)
@@ -154,13 +154,13 @@ Feed this entire document into Claude Code. Work through it section by section. 
 ### Pairing / Connection
 - [ ] Build QR code scanner screen
 - [ ] Parse QR code data (IP, port, pairing token)
-- [ ] Implement pairing handshake with FutureBox API
+- [ ] Implement pairing handshake with FutureBuddy API
 - [ ] Store connection details in secure storage
 - [ ] Auto-reconnect on app launch
 - [ ] Connection status indicator (green/yellow/red) in app header
 - [ ] Manual connection option (enter IP and port manually)
-- [ ] Support for multiple FutureBox devices (list, switch, remove)
-- [ ] mDNS discovery (auto-find FutureBox on local network)
+- [ ] Support for multiple FutureBuddy devices (list, switch, remove)
+- [ ] mDNS discovery (auto-find FutureBuddy on local network)
 - [ ] Tailscale/WireGuard integration for remote access (stretch goal)
 
 ### Chat Mode
@@ -169,11 +169,11 @@ Feed this entire document into Claude Code. Work through it section by section. 
 - [ ] Text input field with send button
 - [ ] Voice input button (speech-to-text)
 - [ ] Typing indicator (three dots) when AI is processing
-- [ ] WebSocket connection to FutureBox API /chat endpoint
+- [ ] WebSocket connection to FutureBuddy API /chat endpoint
 - [ ] Stream AI responses token-by-token (not wait for full response)
 - [ ] Rich message rendering: bold, italic, code blocks, links
 - [ ] Image display in chat (AI can send images)
-- [ ] File attachment button (send files to FutureBox for processing)
+- [ ] File attachment button (send files to FutureBuddy for processing)
 - [ ] Message timestamps
 - [ ] Chat history loading (scroll up to load older messages)
 - [ ] Pull-to-refresh
@@ -188,7 +188,7 @@ Feed this entire document into Claude Code. Work through it section by section. 
 ### Terminal Mode
 - [ ] [BLOCKER] Build terminal screen
 - [ ] Integrate terminal emulator library (xterm.js for React Native, or native SSH library)
-- [ ] SSH connection to FutureBox (auto-connect using stored credentials)
+- [ ] SSH connection to FutureBuddy (auto-connect using stored credentials)
 - [ ] Full terminal rendering (colors, cursor, scrollback)
 - [ ] Soft keyboard with extended keys row: Tab, Ctrl, Alt, Esc, arrows, |, /, ~
 - [ ] Font size adjustment (pinch to zoom or settings)
@@ -202,7 +202,7 @@ Feed this entire document into Claude Code. Work through it section by section. 
 ### Desktop Mode
 - [ ] [BLOCKER] Build desktop screen
 - [ ] Integrate VNC client library (or RDP client library)
-- [ ] Auto-connect to FutureBox VNC server
+- [ ] Auto-connect to FutureBuddy VNC server
 - [ ] Touch-to-mouse mapping (tap = click, long press = right click)
 - [ ] Pinch-to-zoom
 - [ ] Two-finger scroll
@@ -215,7 +215,7 @@ Feed this entire document into Claude Code. Work through it section by section. 
 
 ### Notification System (App Side)
 - [ ] [BLOCKER] Implement push notification handling
-- [ ] Receive notifications via WebSocket from FutureBox API
+- [ ] Receive notifications via WebSocket from FutureBuddy API
 - [ ] Display system notifications when app is in background
 - [ ] Notification card UI (title, body, warning tier color, action buttons)
 - [ ] Action Required notifications: Approve / Deny / Review buttons
@@ -265,18 +265,18 @@ Feed this entire document into Claude Code. Work through it section by section. 
 - [ ] [BLOCKER] Research and choose image builder: Ubuntu Live Build, Cubic, or Linux Live Kit
 - [ ] Create minimal Ubuntu Server base image (no desktop environment needed)
 - [ ] Pre-configure: auto-login, disable suspend/sleep/hibernate, disable lid-close action
-- [ ] Pre-install all FutureBox packages from Phase 1 script
-- [ ] Pre-install FutureBox API server
+- [ ] Pre-install all FutureBuddy packages from Phase 1 script
+- [ ] Pre-install FutureBuddy API server
 - [ ] Pre-configure systemd services (SSH, VNC, Ollama, OpenClaw, API server)
 - [ ] Pre-configure firewall rules
-- [ ] Pre-configure mDNS/Avahi (hostname: futurebox.local)
+- [ ] Pre-configure mDNS/Avahi (hostname: futurebuddy.local)
 - [ ] Include first-boot setup wizard script
 - [ ] First-boot wizard: detect hardware, select appropriate AI model based on RAM
 - [ ] First-boot wizard: connect to WiFi (if no ethernet)
 - [ ] First-boot wizard: generate pairing QR code and display on screen
 - [ ] First-boot wizard: download selected AI model (requires internet)
 - [ ] First-boot wizard: run self-test (verify all services are running)
-- [ ] First-boot wizard: display "FutureBox is ready" with QR code and IP address
+- [ ] First-boot wizard: display "FutureBuddy is ready" with QR code and IP address
 - [ ] After first boot: device is headless, all interaction via companion app
 
 ### Hardware Compatibility
@@ -299,7 +299,7 @@ Feed this entire document into Claude Code. Work through it section by section. 
 - [ ] Build simple USB flasher tool (or document use of Balena Etcher/Rufus)
 - [ ] Set up download hosting (GitHub Releases, or CDN)
 - [ ] Create download page on website with instructions
-- [ ] Write "Create a FutureBox in 5 minutes" quick-start guide
+- [ ] Write "Create a FutureBuddy in 5 minutes" quick-start guide
 
 ---
 
@@ -315,7 +315,7 @@ Feed this entire document into Claude Code. Work through it section by section. 
 - [ ] Research Termux:Boot auto-start reliability across Android versions
 
 ### Android Setup Script
-- [ ] Write master setup script: `setup-futurebox-android.sh` (runs on PC, talks to phone via ADB)
+- [ ] Write master setup script: `setup-futurebuddy-android.sh` (runs on PC, talks to phone via ADB)
 - [ ] Script: Detect device model and Android version
 - [ ] Script: Debloat based on device (Samsung, ASUS, Pixel, generic)
 - [ ] Script: Install Termux + addons via ADB sideload
@@ -324,7 +324,7 @@ Feed this entire document into Claude Code. Work through it section by section. 
 - [ ] Script: Install and configure SSH server
 - [ ] Script: Set up Termux:Boot auto-start scripts
 - [ ] Script: Configure Android settings via ADB (disable sleep, disable sensors, etc.)
-- [ ] Script: Install FutureBox API server inside Termux
+- [ ] Script: Install FutureBuddy API server inside Termux
 - [ ] Script: Generate pairing QR code
 - [ ] Script: Print completion summary
 - [ ] Test on ROG Phone 6
@@ -337,15 +337,15 @@ Feed this entire document into Claude Code. Work through it section by section. 
 ## PHASE 5: BRANDING & MARKETING
 
 ### Brand Identity
-- [ ] Design FutureBox logo (simple, clean, recognizable at small sizes)
+- [ ] Design FutureBuddy logo (simple, clean, recognizable at small sizes)
 - [ ] Choose brand colors (recommend: dark background, blue accent — matches LED concept)
 - [ ] Choose brand fonts
 - [ ] Create logo variations: full, icon only, horizontal, vertical, white, dark
 - [ ] Design app icon (must look good at 1024x1024 and 29x29)
-- [ ] Design FutureBox "device" LED indicator concept art
+- [ ] Design FutureBuddy "device" LED indicator concept art
 
 ### Website
-- [ ] Build landing page at futurebox.ai
+- [ ] Build landing page at futurebuddy.ai
 - [ ] Hero section: "Your AI lives in a box. You talk to it from your phone."
 - [ ] How it works section (3 steps: download, install, scan QR code)
 - [ ] Features section (chat, terminal, desktop, privacy, permissions)
@@ -359,13 +359,13 @@ Feed this entire document into Claude Code. Work through it section by section. 
 ### Commercial / Demo Video
 - [ ] Write shot list based on commercial script
 - [ ] Secure gym location (garage gym)
-- [ ] Get a physical object to represent FutureBox on shelf (3D printed case, or just a small black box with an LED)
+- [ ] Get a physical object to represent FutureBuddy on shelf (3D printed case, or just a small black box with an LED)
 - [ ] Film Scene 1: "Hey Future, I want to get jacked" + gym pan + photo
 - [ ] Film Scene 2: Chat conversation on phone screen (screen recording)
 - [ ] Film Scene 3: Workout montage with phone check-ins
 - [ ] Film Scene 4: "Two weeks later" — progress chart on phone
-- [ ] Film Scene 5: Reveal shot — FutureBox on shelf, LED pulsing
-- [ ] Record voiceover: "FutureBox. My AI lives in a box. I just live my life."
+- [ ] Film Scene 5: Reveal shot — FutureBuddy on shelf, LED pulsing
+- [ ] Record voiceover: "FutureBuddy. My AI lives in a box. I just live my life."
 - [ ] Film post-credits tag: "Am I overtraining?" "Yes. Take tomorrow off."
 - [ ] Edit video (60 seconds main + 5 second tag)
 - [ ] Create thumbnail for YouTube/social
@@ -375,8 +375,8 @@ Feed this entire document into Claude Code. Work through it section by section. 
 - [ ] Create accounts: Twitter/X, YouTube, Instagram, TikTok, Reddit (r/selfhosted, r/LocalLLaMA)
 - [ ] Create GitHub organization and repos (app, os, api-server, docs)
 - [ ] Write launch post for each platform
-- [ ] Write "Behind the scenes: Building FutureBox" thread/post
-- [ ] Create "What would you ask your FutureBox?" engagement post
+- [ ] Write "Behind the scenes: Building FutureBuddy" thread/post
+- [ ] Create "What would you ask your FutureBuddy?" engagement post
 - [ ] Plan weekly content: build progress, demos, tips, use cases
 - [ ] Engage with OpenClaw community (Discord, Reddit) — don't spam, add value
 - [ ] Engage with r/selfhosted, r/LocalLLaMA, r/homelab communities
@@ -392,8 +392,8 @@ Feed this entire document into Claude Code. Work through it section by section. 
 - [ ] Write "FAQ" page
 - [ ] Write "Security & Privacy" page (explain the architecture, what data goes where)
 - [ ] Write "Contributing" guide (for open source contributors)
-- [ ] Write API documentation (for developers building on FutureBox)
-- [ ] Create video tutorial: "Set up FutureBox in 5 minutes"
+- [ ] Write API documentation (for developers building on FutureBuddy)
+- [ ] Create video tutorial: "Set up FutureBuddy in 5 minutes"
 
 ---
 
@@ -447,12 +447,12 @@ Feed this entire document into Claude Code. Work through it section by section. 
 - [ ] macOS / Windows desktop companion app
 - [ ] Voice mode ("Hey Future" wake word on phone)
 - [ ] Multi-user profiles (multiple fingerprints → separate environments)
-- [ ] File manager tab (browse FutureBox filesystem from app)
+- [ ] File manager tab (browse FutureBuddy filesystem from app)
 - [ ] Skill/plugin browser and installer within app
 
 ### OS Enhancements
-- [ ] Auto-update mechanism (pull latest FutureBox updates without reinstall)
-- [ ] Backup and restore (export/import FutureBox state)
+- [ ] Auto-update mechanism (pull latest FutureBuddy updates without reinstall)
+- [ ] Backup and restore (export/import FutureBuddy state)
 - [ ] Encrypted storage by default (LUKS full disk encryption)
 - [ ] VPN client built in (Tailscale one-click setup for remote access)
 - [ ] Multiple AI model management (download, switch, delete models from app)
@@ -481,7 +481,7 @@ These decisions affect everything downstream. Make them first:
    - React Native: larger ecosystem, xterm.js works natively, more JS developers
    - Flutter: better performance, single codebase iOS+Android, growing ecosystem
 
-2. [ ] **App name in stores:** "FutureBox" or "FutureBox Companion" or "FutureBox AI"?
+2. [ ] **App name in stores:** "FutureBuddy" or "FutureBuddy Companion" or "FutureBuddy AI"?
 
 3. [ ] **OS base:** Ubuntu Server 24.04 LTS or Debian 12?
    - Ubuntu: broader hardware support, more packages, more tutorials
@@ -518,4 +518,4 @@ Notes: Anything else
 ---
 
 *Last updated: February 2026*
-*Feed this document into Claude Code and say: "I'm building FutureBox. Here's my master checklist. Let's start with Phase ___."*
+*Feed this document into Claude Code and say: "I'm building FutureBuddy. Here's my master checklist. Let's start with Phase ___."*

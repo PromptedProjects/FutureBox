@@ -1,7 +1,7 @@
 {
-  "name": "futurebox-server",
+  "name": "futurebuddy-server",
   "version": "0.1.0",
-  "description": "FutureBox API server — local AI companion backend",
+  "description": "FutureBuddy API server — local AI companion backend",
   "type": "module",
   "engines": {
     "node": ">=23.0.0"

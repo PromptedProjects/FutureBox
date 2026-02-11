@@ -1,14 +1,14 @@
 import { execSync } from 'node:child_process';
 
-const PROTOCOL = 'futurebox';
+const PROTOCOL = 'futurebuddy';
 
-/** Register futurebox:// protocol in Windows registry */
+/** Register futurebuddy:// protocol in Windows registry */
 export function registerProtocol(serverUrl: string): void {
   try {
     const exePath = process.execPath.replace(/\\/g, '\\\\');
     const script = `
       New-Item -Path "HKCU:\\Software\\Classes\\${PROTOCOL}" -Force | Out-Null
-      Set-ItemProperty -Path "HKCU:\\Software\\Classes\\${PROTOCOL}" -Name "(Default)" -Value "URL:FutureBox Protocol"
+      Set-ItemProperty -Path "HKCU:\\Software\\Classes\\${PROTOCOL}" -Name "(Default)" -Value "URL:FutureBuddy Protocol"
       Set-ItemProperty -Path "HKCU:\\Software\\Classes\\${PROTOCOL}" -Name "URL Protocol" -Value ""
       New-Item -Path "HKCU:\\Software\\Classes\\${PROTOCOL}\\shell\\open\\command" -Force | Out-Null
       Set-ItemProperty -Path "HKCU:\\Software\\Classes\\${PROTOCOL}\\shell\\open\\command" -Name "(Default)" -Value '"${exePath}" "%1"'
@@ -22,7 +22,7 @@ export function registerProtocol(serverUrl: string): void {
   }
 }
 
-/** Parse a futurebox:// deep link URL into an action */
+/** Parse a futurebuddy:// deep link URL into an action */
 export function parseDeepLink(url: string): { action: string; params: Record<string, string> } | null {
   try {
     const parsed = new URL(url);

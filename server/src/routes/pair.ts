@@ -9,7 +9,7 @@ const pairBodySchema = z.object({
 });
 
 export async function pairRoutes(app: FastifyInstance): Promise<void> {
-  /** Generate a pairing token (called from the FutureBox device itself) */
+  /** Generate a pairing token (called from the FutureBuddy device itself) */
   app.post('/pair/create', {
     config: { rateLimit: { max: 5, timeWindow: 60_000 } },
   }, async (_request, reply) => {

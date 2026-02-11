@@ -15,7 +15,7 @@ export class TelegramChannel implements ChannelAdapter {
       this.bot = new Telegraf(config.bot_token);
 
       this.bot.on('text', async (ctx: { reply: (msg: string) => Promise<void> }) => {
-        await ctx.reply('[FutureBox] Message received. Processing...');
+        await ctx.reply('[FutureBuddy] Message received. Processing...');
       });
 
       await this.bot.launch();

@@ -14,7 +14,7 @@ type Mode = 'qr' | 'manual';
 
 function parseQR(data: string): { host: string; token: string } | null {
   try {
-    // futurebox://pair?host=192.168.1.x:3737&token=xxx&tls=0
+    // futurebuddy://pair?host=192.168.1.x:3737&token=xxx&tls=0
     const url = new URL(data);
     const rawHost = url.searchParams.get('host');
     const token = url.searchParams.get('token');
@@ -69,7 +69,7 @@ export default function PairScreen() {
   function handleQRScan(data: string) {
     const parsed = parseQR(data);
     if (!parsed) {
-      Alert.alert('Invalid QR', 'This QR code is not a valid FutureBox pairing code.');
+      Alert.alert('Invalid QR', 'This QR code is not a valid FutureBuddy pairing code.');
       return;
     }
     doPair(parsed.host, parsed.token);
@@ -79,9 +79,9 @@ export default function PairScreen() {
     <SafeAreaView style={styles.safe}>
       <View style={styles.screen}>
         <View style={styles.titleSection}>
-          <Text style={styles.title}>FutureBox</Text>
+          <Text style={styles.title}>FutureBuddy</Text>
           <Text style={styles.subtitle}>
-            Scan the QR code on your FutureBox to pair.
+            Scan the QR code on your FutureBuddy to pair.
           </Text>
         </View>
 
@@ -120,7 +120,7 @@ export default function PairScreen() {
         )}
 
         {loading && (
-          <Text style={styles.loadingText}>Connecting to FutureBox...</Text>
+          <Text style={styles.loadingText}>Connecting to FutureBuddy...</Text>
         )}
       </View>
     </SafeAreaView>

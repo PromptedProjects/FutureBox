@@ -2,7 +2,7 @@ import { getConfigValue, setConfigValue, getAllConfig, deleteConfigValue } from 
 
 /** Known config keys with defaults */
 const DEFAULTS: Record<string, string> = {
-  'device.name': 'FutureBox',
+  'device.name': 'FutureBuddy',
   'ai.system_prompt': '',
   'ai.default_model': '',
   'notifications.quiet_hours_start': '',

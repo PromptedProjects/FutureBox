@@ -9,7 +9,7 @@ export function useBiometric() {
 
   const authenticate = useCallback(async (): Promise<boolean> => {
     const result = await LocalAuthentication.authenticateAsync({
-      promptMessage: 'Unlock FutureBox',
+      promptMessage: 'Unlock FutureBuddy',
       fallbackLabel: 'Use passcode',
       disableDeviceFallback: false,
     });

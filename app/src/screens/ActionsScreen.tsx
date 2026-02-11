@@ -80,7 +80,7 @@ export default function ActionsScreen() {
               <Feather name="shield-off" size={48} color={colors.textMuted} />
               <Text style={styles.emptyTitle}>No pending actions</Text>
               <Text style={styles.emptySubtitle}>
-                Actions will appear here when FutureBox needs your approval.
+                Actions will appear here when FutureBuddy needs your approval.
               </Text>
             </View>
           }

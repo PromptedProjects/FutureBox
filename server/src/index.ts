@@ -25,7 +25,7 @@ async function main() {
   const config = loadConfig();
   const logger = createLogger(config.LOG_LEVEL);
 
-  logger.info('FutureBox server starting...');
+  logger.info('FutureBuddy server starting...');
 
   // Initialize storage
   const db = initDatabase(config.DATA_DIR, logger);
@@ -90,7 +90,7 @@ async function main() {
 
   await app.listen({ host: config.HOST, port: config.PORT });
   const protocol = serverOpts?.https ? 'https' : 'http';
-  logger.info(`FutureBox listening on ${protocol}://${config.HOST}:${config.PORT}`);
+  logger.info(`FutureBuddy listening on ${protocol}://${config.HOST}:${config.PORT}`);
 
   // Register built-in skills (Phase 5)
   registerBuiltinSkills();
@@ -147,6 +147,6 @@ async function main() {
 }
 
 main().catch((err) => {
-  console.error('Fatal error starting FutureBox:', err);
+  console.error('Fatal error starting FutureBuddy:', err);
   process.exit(1);
 });

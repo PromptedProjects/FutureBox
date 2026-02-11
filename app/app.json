@@ -1,13 +1,13 @@
 {
   "expo": {
-    "name": "FutureBox",
-    "slug": "futurebox",
+    "name": "FutureBuddyMobile",
+    "slug": "futurebuddy-mobile",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
     "newArchEnabled": true,
-    "scheme": "futurebox",
+    "scheme": "futurebuddy",
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
@@ -15,15 +15,15 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.futurebox.app",
+      "bundleIdentifier": "com.futurebuddy.mobile",
       "infoPlist": {
-        "NSCameraUsageDescription": "FutureBox uses the camera to scan QR codes and take photos to send to your AI.",
-        "NSMicrophoneUsageDescription": "FutureBox uses the microphone for voice input to your AI assistant.",
-        "NSPhotoLibraryUsageDescription": "FutureBox needs photo library access to send images to your AI.",
-        "NSPhotoLibraryAddUsageDescription": "FutureBox can save images to your photo library.",
-        "NSFaceIDUsageDescription": "FutureBox uses Face ID to secure access to your device.",
-        "NSLocalNetworkUsageDescription": "FutureBox connects to your local server over the network.",
-        "NSDocumentsFolderUsageDescription": "FutureBox can attach files from your documents."
+        "NSCameraUsageDescription": "FutureBuddy uses the camera to scan QR codes and take photos to send to your AI.",
+        "NSMicrophoneUsageDescription": "FutureBuddy uses the microphone for voice input to your AI assistant.",
+        "NSPhotoLibraryUsageDescription": "FutureBuddy needs photo library access to send images to your AI.",
+        "NSPhotoLibraryAddUsageDescription": "FutureBuddy can save images to your photo library.",
+        "NSFaceIDUsageDescription": "FutureBuddy uses Face ID to secure access to your device.",
+        "NSLocalNetworkUsageDescription": "FutureBuddy connects to your local server over the network.",
+        "NSDocumentsFolderUsageDescription": "FutureBuddy can attach files from your documents."
       }
     },
     "android": {
@@ -32,7 +32,7 @@
         "backgroundColor": "#0a0a0a"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.futurebox.app",
+      "package": "com.futurebuddy.mobile",
       "permissions": [
         "CAMERA",
         "RECORD_AUDIO",
@@ -59,21 +59,21 @@
       [
         "expo-camera",
         {
-          "cameraPermission": "FutureBox uses the camera to scan QR codes and take photos to send to your AI.",
-          "microphonePermission": "FutureBox uses the microphone for voice input."
+          "cameraPermission": "FutureBuddy uses the camera to scan QR codes and take photos to send to your AI.",
+          "microphonePermission": "FutureBuddy uses the microphone for voice input."
         }
       ],
       [
         "expo-image-picker",
         {
-          "photosPermission": "FutureBox needs photo library access to send images to your AI.",
-          "cameraPermission": "FutureBox uses the camera to take photos to send to your AI."
+          "photosPermission": "FutureBuddy needs photo library access to send images to your AI.",
+          "cameraPermission": "FutureBuddy uses the camera to take photos to send to your AI."
         }
       ],
       [
         "expo-audio",
         {
-          "microphonePermission": "FutureBox uses the microphone for voice input to your AI assistant."
+          "microphonePermission": "FutureBuddy uses the microphone for voice input to your AI assistant."
         }
       ],
       [

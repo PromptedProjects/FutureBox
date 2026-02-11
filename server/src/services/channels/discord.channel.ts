@@ -23,7 +23,7 @@ export class DiscordChannel implements ChannelAdapter {
 
       this.client.on('messageCreate', async (msg: { author: { bot: boolean }; reply: (m: string) => Promise<void> }) => {
         if (msg.author.bot) return;
-        await msg.reply('[FutureBox] Message received. Processing...');
+        await msg.reply('[FutureBuddy] Message received. Processing...');
       });
 
       await this.client.login(config.bot_token);

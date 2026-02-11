@@ -1,4 +1,4 @@
-# FutureBoxWindows
+# FutureBuddy
 
 Control your Windows PC from your phone. AI chat, remote terminal, file browser, and action approvals — all from a companion app over your local network.
 
@@ -6,7 +6,7 @@ Control your Windows PC from your phone. AI chat, remote terminal, file browser,
 
 ```
 ┌──────────────────┐         ┌──────────────────────┐
-│  FutureBox App   │◄──────►│   FutureBox Server    │
+│  FutureBuddy App   │◄──────►│   FutureBuddy Server    │
 │  (Your Phone)    │  WiFi   │   (Windows PC)        │
 │                  │  WS/HTTP│                        │
 │  - AI Chat       │         │  - Multi-Model AI      │
@@ -73,7 +73,7 @@ Scan the QR code with Expo Go on your phone.
 ## Project Structure
 
 ```
-FutureBoxWindows/
+FutureBuddy/
 ├── server/              # Fastify + TypeScript API server
 │   ├── src/
 │   │   ├── routes/      # HTTP endpoints (chat, files, config, etc.)
@@ -113,7 +113,7 @@ All server config is in `server/.env` (copy from `.env.example`):
 
 ## AI Providers
 
-FutureBox routes each AI capability to the best available provider:
+FutureBuddy routes each AI capability to the best available provider:
 
 | Capability | Local (Ollama) | Cloud |
 |---|---|---|

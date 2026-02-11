@@ -1,5 +1,5 @@
 #!/data/data/com.termux/files/usr/bin/bash
-# Termux:Boot auto-start script for FutureBox
+# Termux:Boot auto-start script for FutureBuddy
 # Place in ~/.termux/boot/
 
 # Wait for network
@@ -14,8 +14,8 @@ for i in $(seq 1 30); do
   sleep 1
 done
 
-# Start FutureBox server
-cd /data/data/com.termux/files/home/futurebox/server
-NODE_ENV=production DATA_DIR=$HOME/futurebox-data node dist/index.js &
+# Start FutureBuddy server
+cd /data/data/com.termux/files/home/futurebuddy/server
+NODE_ENV=production DATA_DIR=$HOME/futurebuddy-data node dist/index.js &
 
-echo "FutureBox started at $(date)" >> $HOME/futurebox-boot.log
+echo "FutureBuddy started at $(date)" >> $HOME/futurebuddy-boot.log

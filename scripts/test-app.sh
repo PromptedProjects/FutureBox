@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # =============================================================
-# FutureBox Companion App — Test Script
+# FutureBuddy Companion App — Test Script
 # Run after: cd server && npm run dev
 # =============================================================
 set -euo pipefail
@@ -17,7 +17,7 @@ N="\033[0m"
 hr() { echo -e "\n${C}────────────────────────────────────────${N}"; }
 jp() { node -e "let buf='';process.stdin.on('data',c=>buf+=c);process.stdin.on('end',()=>{try{const j=JSON.parse(buf);console.log($1)}catch(e){console.error('parse error:',buf.slice(0,200))}})"; }
 
-echo -e "${B}${G}FutureBox App Test Script${N}"
+echo -e "${B}${G}FutureBuddy App Test Script${N}"
 echo -e "Server: ${HOST}\n"
 
 # 1. Health check
@@ -81,7 +81,7 @@ echo -e "${B}7. Submitting YELLOW tier action...${N}"
 curl -sk -X POST "${HOST}/actions" \
   -H "Authorization: Bearer ${SESSION_TOKEN}" \
   -H "Content-Type: application/json" \
-  -d '{"type":"file.write","tier":"yellow","title":"Write config to ~/.futureboxrc","description":"Writing default configuration file with AI preferences."}' > /dev/null
+  -d '{"type":"file.write","tier":"yellow","title":"Write config to ~/.futurebuddyrc","description":"Writing default configuration file with AI preferences."}' > /dev/null
 echo -e "   ${G}Sent${N}"
 
 # 8. Submit GREEN action

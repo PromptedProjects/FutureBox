@@ -1,6 +1,6 @@
-# FutureBox — Cloudflare Tunnel Setup
+# FutureBuddy — Cloudflare Tunnel Setup
 param(
-    [string]$TunnelName = "futurebox",
+    [string]$TunnelName = "futurebuddy",
     [int]$LocalPort = 3737
 )
 

@@ -80,7 +80,7 @@ export default function SettingsScreen() {
   function handleUnpair() {
     Alert.alert(
       'Unpair Device',
-      'This will disconnect from FutureBox and clear your session. You will need to pair again.',
+      'This will disconnect from FutureBuddy and clear your session. You will need to pair again.',
       [
         { text: 'Cancel', style: 'cancel' },
         {

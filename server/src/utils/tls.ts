@@ -11,8 +11,8 @@ interface TLSCerts {
 /** Generate self-signed certs for local network HTTPS */
 export function ensureSelfSignedCerts(dataDir: string, logger: Logger): TLSCerts {
   const certDir = join(dataDir, 'certs');
-  const keyPath = join(certDir, 'futurebox.key');
-  const certPath = join(certDir, 'futurebox.crt');
+  const keyPath = join(certDir, 'futurebuddy.key');
+  const certPath = join(certDir, 'futurebuddy.crt');
 
   if (existsSync(keyPath) && existsSync(certPath)) {
     logger.info('TLS certs found');
@@ -27,7 +27,7 @@ export function ensureSelfSignedCerts(dataDir: string, logger: Logger): TLSCerts
 
   try {
     execSync(
-      `openssl req -x509 -newkey rsa:2048 -keyout "${keyPath}" -out "${certPath}" -days 365 -nodes -subj "/CN=futurebox.local"`,
+      `openssl req -x509 -newkey rsa:2048 -keyout "${keyPath}" -out "${certPath}" -days 365 -nodes -subj "/CN=futurebuddy.local"`,
       { stdio: 'pipe' },
     );
     logger.info('Self-signed TLS certificate generated');
