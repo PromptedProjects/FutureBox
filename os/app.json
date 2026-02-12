@@ -1,0 +1,73 @@
+{
+  "expo": {
+    "name": "FutureBuddyOS",
+    "slug": "futurebuddy-os",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "newArchEnabled": true,
+    "scheme": "futurebuddy",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0a0a0a"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#0a0a0a"
+      },
+      "edgeToEdgeEnabled": true,
+      "package": "com.futurebuddy.os",
+      "permissions": [
+        "CAMERA",
+        "RECORD_AUDIO",
+        "READ_MEDIA_IMAGES",
+        "READ_MEDIA_VIDEO",
+        "READ_MEDIA_AUDIO",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE",
+        "ACCESS_NETWORK_STATE",
+        "ACCESS_WIFI_STATE",
+        "VIBRATE",
+        "USE_BIOMETRIC",
+        "USE_FINGERPRINT",
+        "WAKE_LOCK",
+        "FOREGROUND_SERVICE",
+        "RECEIVE_BOOT_COMPLETED"
+      ]
+    },
+    "plugins": [
+      "expo-secure-store",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "FutureBuddyOS uses the camera to scan QR codes and take photos.",
+          "microphonePermission": "FutureBuddyOS uses the microphone for voice input."
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "FutureBuddyOS needs photo library access to send images.",
+          "cameraPermission": "FutureBuddyOS uses the camera to take photos."
+        }
+      ],
+      [
+        "expo-audio",
+        {
+          "microphonePermission": "FutureBuddyOS uses the microphone for voice input."
+        }
+      ],
+      [
+        "expo-document-picker",
+        {
+          "iCloudContainerEnvironment": "Production"
+        }
+      ],
+      "expo-local-authentication",
+      "./plugins/launcher-plugin"
+    ]
+  }
+}

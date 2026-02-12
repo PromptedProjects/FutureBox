@@ -1,4 +1,5 @@
-/** All WebSocket message types */
+// Mirrors server ws-protocol.ts exactly
+
 export type WSMessageType =
   // Client → Server
   | 'chat.send'
@@ -29,26 +30,24 @@ export type WSMessageType =
 
 export interface WSMessage<T = unknown> {
   type: WSMessageType;
-  id: string;        // Message ID for correlation
+  id: string;
   payload: T;
-  timestamp: string; // ISO-8601
+  timestamp: string;
 }
 
-// --- Client payloads ---
-
+// Client → Server payloads
 export interface ChatSendPayload {
   message: string;
   conversation_id?: string;
-  images?: string[]; // base64-encoded images
-  system_prompt?: string; // buddy/space system prompt override
+  images?: string[];
+  system_prompt?: string;
 }
 
 export interface ActionDecisionPayload {
   action_id: string;
 }
 
-// --- Server payloads ---
-
+// Server → Client payloads
 export interface ChatTokenPayload {
   conversation_id: string;
   token: string;
@@ -82,8 +81,19 @@ export interface ChatToolResultPayload {
   error?: string;
 }
 
-// --- Shell payloads ---
+export interface NotificationActionPayload {
+  action_id: string;
+  type: string;
+  tier: 'red' | 'yellow' | 'green';
+  title: string;
+  description?: string;
+}
 
+export interface NotificationInfoPayload {
+  result: 'approved' | 'denied' | 'not_found';
+}
+
+// Shell payloads
 export interface ShellExecPayload {
   tab_id: string;
   command: string;
@@ -93,12 +103,6 @@ export interface ShellExecPayload {
 export interface ShellInputPayload {
   tab_id: string;
   data: string;
-}
-
-export interface ShellResizePayload {
-  tab_id: string;
-  cols: number;
-  rows: number;
 }
 
 export interface ShellKillPayload {
@@ -115,8 +119,4 @@ export interface ShellExitPayload {
   tab_id: string;
   code: number | null;
   signal: string | null;
-}
-
-export function createWSMessage<T>(type: WSMessageType, id: string, payload: T): WSMessage<T> {
-  return { type, id, payload, timestamp: new Date().toISOString() };
 }

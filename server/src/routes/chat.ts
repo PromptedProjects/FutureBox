@@ -5,6 +5,7 @@ import { sendMessage } from '../services/chat.service.js';
 const chatBodySchema = z.object({
   message: z.string().min(1),
   conversation_id: z.string().optional(),
+  system_prompt: z.string().optional(),
 });
 
 export async function chatRoutes(app: FastifyInstance): Promise<void> {
@@ -17,7 +18,7 @@ export async function chatRoutes(app: FastifyInstance): Promise<void> {
     }
 
     try {
-      const result = await sendMessage(body.data.conversation_id, body.data.message);
+      const result = await sendMessage(body.data.conversation_id, body.data.message, body.data.system_prompt);
       return { ok: true, data: result };
     } catch (err: any) {
       reply.code(502).send({ ok: false, error: err.message ?? 'AI provider error' });

@@ -115,6 +115,7 @@ async function executeTool(
 export async function sendMessage(
   conversationId: string | undefined,
   userContent: string,
+  systemPrompt?: string,
 ): Promise<SendMessageResult> {
   const convId = conversationId ?? nanoid();
   if (!conversationId) {
@@ -128,7 +129,7 @@ export async function sendMessage(
 
   const history = listMessages(convId, 50);
   const messages: ChatMessage[] = [
-    { role: 'system', content: BASE_SYSTEM_PROMPT },
+    { role: 'system', content: systemPrompt ?? BASE_SYSTEM_PROMPT },
     ...history.map((m) => ({ role: m.role, content: m.content })),
   ];
 
@@ -209,6 +210,7 @@ export async function* streamMessage(
   conversationId: string | undefined,
   userContent: string,
   images?: string[],
+  systemPrompt?: string,
 ): AsyncGenerator<StreamChunk> {
   const convId = conversationId ?? nanoid();
   if (!conversationId) {
@@ -222,7 +224,7 @@ export async function* streamMessage(
 
   const history = listMessages(convId, 50);
   const messages: ChatMessage[] = [
-    { role: 'system', content: BASE_SYSTEM_PROMPT },
+    { role: 'system', content: systemPrompt ?? BASE_SYSTEM_PROMPT },
     ...history.map((m, i) => {
       const msg: ChatMessage = { role: m.role, content: m.content };
       if (i === history.length - 1 && m.role === 'user' && images?.length) {

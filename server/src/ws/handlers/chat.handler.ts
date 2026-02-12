@@ -19,7 +19,7 @@ export async function handleChatSend(sessionId: string, messageId: string, paylo
   activeStreams.set(messageId, abort);
 
   try {
-    const stream = streamMessage(payload.conversation_id, payload.message, payload.images);
+    const stream = streamMessage(payload.conversation_id, payload.message, payload.images, payload.system_prompt);
 
     for await (const chunk of stream) {
       if (abort.signal.aborted) break;
