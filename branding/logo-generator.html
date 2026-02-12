@@ -1,0 +1,1325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>PS-Style Logo Maker</title>
+<style>
+  /* PlayStation font from CDNFonts */
+  @import url('https://fonts.cdnfonts.com/css/playstation');
+  /* Google Fonts — creative, gaming, futuristic */
+  @import url('https://fonts.googleapis.com/css2?family=Anton&family=Archivo+Black&family=Audiowide&family=Bebas+Neue&family=Black+Ops+One&family=Bruno+Ace&family=Bungee&family=Chakra+Petch:wght@700&family=Electrolize&family=Exo+2:wght@700;900&family=Major+Mono+Display&family=Michroma&family=Orbitron:wght@700;900&family=Oswald:wght@700&family=Oxanium:wght@700&family=Play:wght@700&family=Press+Start+2P&family=Rajdhani:wght@700&family=Righteous&family=Russo+One&family=Silkscreen&family=Space+Mono:wght@700&family=Teko:wght@700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #0a0a0a;
+    color: #ccc;
+    font-family: 'Cascadia Mono', Consolas, monospace;
+    min-height: 100vh;
+    display: flex;
+  }
+
+  .sidebar {
+    width: 320px;
+    background: #111;
+    border-right: 1px solid #222;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    overflow-y: auto;
+    flex-shrink: 0;
+  }
+
+  .sidebar h1 {
+    font-size: 12px;
+    color: #555;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    font-weight: 400;
+    margin-bottom: 4px;
+  }
+
+  .section-title {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 6px;
+    border-bottom: 1px solid #1a1a1a;
+    padding-bottom: 4px;
+    color: #444;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .section-title::after {
+    content: '▾';
+    font-size: 8px;
+    color: #333;
+  }
+  .section-title.collapsed::after { content: '▸'; }
+  .section-body { transition: max-height 0.2s; overflow: hidden; }
+  .section-body.collapsed { max-height: 0 !important; }
+
+  .p-accent { color: #E66; }
+  .s-accent { color: #FA0; }
+
+  .field { margin-bottom: 6px; }
+  .field label {
+    display: block;
+    font-size: 11px;
+    color: #666;
+    margin-bottom: 3px;
+  }
+  .field input[type="text"], .field select {
+    width: 100%;
+    padding: 5px 8px;
+    background: #1a1a1a;
+    border: 1px solid #2a2a2a;
+    color: #ddd;
+    font-family: inherit;
+    font-size: 12px;
+    outline: none;
+  }
+  .field input:focus, .field select:focus { border-color: #2563EB; }
+
+  .letter-input {
+    width: 50px !important;
+    text-align: center;
+    font-size: 18px !important;
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+
+  .top-row { display: flex; gap: 8px; align-items: flex-end; }
+  .top-row .field:last-child { flex: 1; }
+
+  .color-row {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    margin-bottom: 3px;
+  }
+  .color-row label { flex: 1; font-size: 10px; color: #555; }
+  .color-row input[type="color"] {
+    width: 28px; height: 22px;
+    border: 1px solid #2a2a2a;
+    background: none; padding: 0; cursor: pointer;
+  }
+  .color-row input::-webkit-color-swatch-wrapper { padding: 1px; }
+  .color-row input::-webkit-color-swatch { border: none; }
+
+  .field input[type="range"] { width: 100%; accent-color: #2563EB; }
+  .range-val { font-size: 10px; color: #555; float: right; }
+
+  .inline-row { display: flex; gap: 8px; }
+  .inline-row .field { flex: 1; }
+
+  .btn-row { display: flex; gap: 6px; flex-wrap: wrap; }
+  .btn {
+    padding: 5px 10px; background: #2563EB; color: #fff; border: none;
+    font-family: inherit; font-size: 11px; cursor: pointer; letter-spacing: 1px;
+  }
+  .btn:hover { background: #1d4ed8; }
+  .btn.sec { background: #222; }
+  .btn.sec:hover { background: #333; }
+  .btn.sm { font-size: 9px; padding: 3px 8px; }
+
+  .preset-row { display: flex; gap: 4px; flex-wrap: wrap; }
+  .preset {
+    width: 20px; height: 20px;
+    border: 2px solid #333; cursor: pointer; display: flex;
+  }
+  .preset:hover { border-color: #fff; }
+  .preset div { flex: 1; }
+
+  .seg-colors { display: flex; gap: 3px; flex-wrap: wrap; align-items: center; }
+  .seg-colors input[type="color"] {
+    width: 28px; height: 22px;
+    border: 1px solid #2a2a2a;
+    background: none; padding: 0; cursor: pointer;
+  }
+  .seg-colors input::-webkit-color-swatch-wrapper { padding: 1px; }
+  .seg-colors input::-webkit-color-swatch { border: none; }
+  .seg-colors label {
+    font-size: 8px; color: #444; width: 28px; text-align: center; display: block;
+  }
+  .seg-color-item { display: flex; flex-direction: column; align-items: center; gap: 1px; }
+
+  /* Preview — sticky so it stays visible while scrolling sidebar */
+  .preview-area {
+    flex: 1;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 40px; gap: 0; overflow: hidden;
+  }
+
+  /* Frame container */
+  .frame-wrap {
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    position: relative;
+    transition: border-radius 0.2s, border 0.2s;
+  }
+
+  .logo-scene {
+    perspective: 900px;
+    perspective-origin: 50% 40%;
+    position: relative;
+    width: 600px; height: 450px;
+    display: flex;
+    align-items: flex-end; justify-content: center;
+    transform-style: preserve-3d;
+  }
+
+  .logo-anchor {
+    position: relative;
+    transform-style: preserve-3d;
+    display: inline-flex;
+    align-items: flex-end;
+  }
+
+  .letter-group {
+    position: relative;
+    transform-style: preserve-3d;
+  }
+  .letter-group.p-group { z-index: 2; }
+  .letter-group.s-group {
+    position: absolute; z-index: 1;
+  }
+
+  .letter-segment {
+    font-weight: 900;
+    line-height: 0.85;
+    position: absolute;
+    top: 0; left: 0;
+    user-select: none;
+    white-space: nowrap;
+  }
+
+  .logo-text { text-align: center; user-select: none; }
+  .logo-text .line1 { font-weight: 700; }
+  .logo-text .line2 { opacity: 0.6; }
+
+  #exportCanvas { display: none; }
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <h1>PS-Style Logo Maker</h1>
+
+  <!-- Letters & Font -->
+  <div>
+    <div class="section-title" onclick="toggleSection(this)">Letters &amp; Font</div>
+    <div class="section-body">
+      <div class="top-row">
+        <div class="field">
+          <label>Upright</label>
+          <input type="text" id="pChar" value="P" maxlength="1" class="letter-input" />
+        </div>
+        <div class="field">
+          <label>Flat</label>
+          <input type="text" id="sChar" value="S" maxlength="1" class="letter-input" />
+        </div>
+        <div class="field">
+          <label>Font</label>
+          <select id="fontSel">
+            <optgroup label="— PlayStation —">
+              <option value="'PlayStation', sans-serif" selected>PlayStation (Official)</option>
+            </optgroup>
+            <optgroup label="— Futuristic / Sci-Fi —">
+              <option value="'Orbitron', sans-serif">Orbitron (PS2 vibe)</option>
+              <option value="'Audiowide', sans-serif">Audiowide</option>
+              <option value="'Bruno Ace', sans-serif">Bruno Ace</option>
+              <option value="'Electrolize', sans-serif">Electrolize</option>
+              <option value="'Michroma', sans-serif">Michroma</option>
+              <option value="'Oxanium', sans-serif">Oxanium</option>
+              <option value="'Exo 2', sans-serif">Exo 2</option>
+              <option value="'Chakra Petch', sans-serif">Chakra Petch</option>
+            </optgroup>
+            <optgroup label="— Bold / Display —">
+              <option value="'Archivo Black', sans-serif">Archivo Black</option>
+              <option value="'Anton', sans-serif">Anton</option>
+              <option value="'Bebas Neue', sans-serif">Bebas Neue</option>
+              <option value="'Oswald', sans-serif">Oswald</option>
+              <option value="'Russo One', sans-serif">Russo One</option>
+              <option value="'Black Ops One', sans-serif">Black Ops One</option>
+              <option value="'Bungee', sans-serif">Bungee</option>
+              <option value="'Righteous', sans-serif">Righteous</option>
+              <option value="'Teko', sans-serif">Teko</option>
+              <option value="'Rajdhani', sans-serif">Rajdhani</option>
+              <option value="'Play', sans-serif">Play</option>
+            </optgroup>
+            <optgroup label="— Retro / Pixel —">
+              <option value="'Press Start 2P', sans-serif">Press Start 2P</option>
+              <option value="'Silkscreen', sans-serif">Silkscreen</option>
+            </optgroup>
+            <optgroup label="— Mono / Artistic —">
+              <option value="'Major Mono Display', monospace">Major Mono Display</option>
+              <option value="'Space Mono', monospace">Space Mono</option>
+              <option value="'Cascadia Mono', monospace">Cascadia Mono</option>
+            </optgroup>
+            <optgroup label="— System —">
+              <option value="'Arial Black', sans-serif">Arial Black</option>
+              <option value="Impact, sans-serif">Impact</option>
+              <option value="'Segoe UI Black', 'Segoe UI', sans-serif">Segoe UI Black</option>
+              <option value="Futura, 'Century Gothic', sans-serif">Futura</option>
+              <option value="Helvetica, Arial, sans-serif">Helvetica</option>
+            </optgroup>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- P Letter -->
+  <div>
+    <div class="section-title" onclick="toggleSection(this)"><span class="p-accent">Upright Letter (P position)</span></div>
+    <div class="section-body">
+      <div class="field">
+        <label>Size <span class="range-val" id="rvPSize">307</span></label>
+        <input type="range" id="pSize" min="80" max="400" value="307" />
+      </div>
+      <div class="inline-row">
+        <div class="field">
+          <label>Segments</label>
+          <select id="pSegs" onchange="buildSegColors('p'); render();">
+            <option value="1" selected>1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Split direction</label>
+          <select id="pDir" onchange="toggleCustomAngle('p'); render();">
+            <option value="0">Horizontal →</option>
+            <option value="90">Vertical ↓</option>
+            <option value="45">Diagonal ↘</option>
+            <option value="135">Diagonal ↙</option>
+            <option value="custom">Custom angle</option>
+          </select>
+        </div>
+      </div>
+      <div class="field" id="pCustomWrap" style="display:none">
+        <label>Custom angle <span class="range-val" id="rvPCA">0</span>deg</label>
+        <input type="range" id="pCustomAngle" min="0" max="359" value="0" />
+      </div>
+      <div class="seg-colors" id="pColors"></div>
+      <div class="field">
+        <label>Y turn <span class="range-val" id="rvPY">-34</span>deg</label>
+        <input type="range" id="pRotY" min="-45" max="45" value="-34" />
+      </div>
+      <div class="field">
+        <label>Z tilt <span class="range-val" id="rvPZ">1</span>deg</label>
+        <input type="range" id="pRotZ" min="-30" max="30" value="1" />
+      </div>
+      <div class="field">
+        <label>X tilt <span class="range-val" id="rvPX">0</span>deg</label>
+        <input type="range" id="pRotX" min="-20" max="20" value="0" />
+      </div>
+    </div>
+  </div>
+
+  <!-- S Letter -->
+  <div>
+    <div class="section-title" onclick="toggleSection(this)"><span class="s-accent">Flat Letter (S position)</span></div>
+    <div class="section-body">
+      <div class="field">
+        <label>Size <span class="range-val" id="rvSSize">400</span></label>
+        <input type="range" id="sSize" min="80" max="400" value="400" />
+      </div>
+      <div class="inline-row">
+        <div class="field">
+          <label>Segments</label>
+          <select id="sSegs" onchange="buildSegColors('s'); render();">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3" selected>3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Split direction</label>
+          <select id="sDir" onchange="toggleCustomAngle('s'); render();">
+            <option value="0">Horizontal →</option>
+            <option value="90">Vertical ↓</option>
+            <option value="45">Diagonal ↘</option>
+            <option value="135">Diagonal ↙</option>
+            <option value="custom">Custom angle</option>
+          </select>
+        </div>
+      </div>
+      <div class="field" id="sCustomWrap" style="display:none">
+        <label>Custom angle <span class="range-val" id="rvSCA">0</span>deg</label>
+        <input type="range" id="sCustomAngle" min="0" max="359" value="0" />
+      </div>
+      <div class="seg-colors" id="sColors"></div>
+      <div class="field">
+        <label>X rotation (lie flat) <span class="range-val" id="rvSX">78</span>deg</label>
+        <input type="range" id="sRotX" min="30" max="88" value="78" />
+      </div>
+      <div class="field">
+        <label>Y turn <span class="range-val" id="rvSY">-1</span>deg</label>
+        <input type="range" id="sRotY" min="-45" max="45" value="-1" />
+      </div>
+      <div class="field">
+        <label>Z spin <span class="range-val" id="rvSZ">-27</span>deg</label>
+        <input type="range" id="sRotZ" min="-45" max="45" value="-27" />
+      </div>
+    </div>
+  </div>
+
+  <!-- Positioning -->
+  <div>
+    <div class="section-title" onclick="toggleSection(this)">Positioning</div>
+    <div class="section-body">
+      <div style="font-size:9px;color:#E66;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">P offset</div>
+      <div class="field">
+        <label>P horizontal <span class="range-val" id="rvPOvX">33</span>px</label>
+        <input type="range" id="pOffsetX" min="-100" max="100" value="33" />
+      </div>
+      <div class="field">
+        <label>P vertical <span class="range-val" id="rvPOvY">39</span>px</label>
+        <input type="range" id="pOffsetY" min="-80" max="80" value="39" />
+      </div>
+      <div class="field">
+        <label>P depth <span class="range-val" id="rvPOvZ">4</span>px</label>
+        <input type="range" id="pOffsetZ" min="-100" max="100" value="4" />
+      </div>
+      <div style="font-size:9px;color:#FA0;text-transform:uppercase;letter-spacing:1px;margin:6px 0 4px;">S offset</div>
+      <div class="field">
+        <label>S horizontal overlap <span class="range-val" id="rvOvX">96</span>px</label>
+        <input type="range" id="overlapX" min="-20" max="200" value="96" />
+      </div>
+      <div class="field">
+        <label>S vertical <span class="range-val" id="rvOvY">-19</span>px</label>
+        <input type="range" id="overlapY" min="-80" max="80" value="-19" />
+      </div>
+      <div class="field">
+        <label>S depth <span class="range-val" id="rvOvZ">0</span>px</label>
+        <input type="range" id="overlapZ" min="-100" max="100" value="0" />
+      </div>
+      <div style="font-size:9px;color:#666;text-transform:uppercase;letter-spacing:1px;margin:6px 0 4px;">Camera</div>
+      <div class="field">
+        <label>Perspective <span class="range-val" id="rvPersp">2000</span>px</label>
+        <input type="range" id="scenePerspective" min="300" max="2000" value="2000" />
+      </div>
+      <div class="field">
+        <label>Eye height <span class="range-val" id="rvEye">21</span>%</label>
+        <input type="range" id="eyeHeight" min="10" max="90" value="21" />
+      </div>
+    </div>
+  </div>
+
+  <!-- Background & Presets -->
+  <div>
+    <div class="section-title" onclick="toggleSection(this)">Background &amp; Presets</div>
+    <div class="section-body">
+      <div class="color-row"><label>Background</label><input type="color" id="cBG" value="#000000" /></div>
+      <div class="preset-row" id="presets"></div>
+      <div style="margin-top:6px">
+        <button class="btn sm" onclick="resetToPS()">PS Original</button>
+        <button class="btn sm" onclick="resetToFB()">FutureBuddy</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Frame -->
+  <div>
+    <div class="section-title" onclick="toggleSection(this)">Frame</div>
+    <div class="section-body">
+      <div class="field">
+        <label>Shape</label>
+        <select id="frameShape">
+          <option value="none">None</option>
+          <option value="square" selected>Square</option>
+          <option value="rounded">Rounded Square</option>
+          <option value="circle">Circle</option>
+        </select>
+      </div>
+      <div id="frameOptions" style="display:none">
+        <div class="field">
+          <label>Frame size <span class="range-val" id="rvFrameSize">400</span>px</label>
+          <input type="range" id="frameSize" min="200" max="800" value="400" />
+        </div>
+        <div class="field">
+          <label>Padding <span class="range-val" id="rvFramePad">30</span>px</label>
+          <input type="range" id="framePad" min="0" max="100" value="30" />
+        </div>
+        <div class="field">
+          <label>Border width <span class="range-val" id="rvFrameBorder">0</span>px</label>
+          <input type="range" id="frameBorder" min="0" max="20" value="0" />
+        </div>
+        <div class="color-row"><label>Border color</label><input type="color" id="frameBorderColor" value="#aeff00" /></div>
+        <div class="color-row"><label>Frame bg</label><input type="color" id="frameBG" value="#ffffff" /></div>
+        <div class="field">
+          <label>Corner radius <span class="range-val" id="rvFrameRadius">40</span>px</label>
+          <input type="range" id="frameRadius" min="0" max="200" value="40" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Text -->
+  <div>
+    <div class="section-title" onclick="toggleSection(this)">Text Below</div>
+    <div class="section-body">
+      <div class="field">
+        <label>Line 1</label>
+        <input type="text" id="line1" value="PlayStation" />
+      </div>
+      <div class="field">
+        <label>Line 2</label>
+        <input type="text" id="line2" value="" />
+      </div>
+      <div class="field">
+        <label>Font</label>
+        <select id="textFontSel">
+          <optgroup label="— PlayStation —">
+            <option value="'PlayStation', sans-serif" selected>PlayStation (Official)</option>
+          </optgroup>
+          <optgroup label="— Futuristic / Sci-Fi —">
+            <option value="'Orbitron', sans-serif">Orbitron (PS2 vibe)</option>
+            <option value="'Audiowide', sans-serif">Audiowide</option>
+            <option value="'Bruno Ace', sans-serif">Bruno Ace</option>
+            <option value="'Electrolize', sans-serif">Electrolize</option>
+            <option value="'Michroma', sans-serif">Michroma</option>
+            <option value="'Oxanium', sans-serif">Oxanium</option>
+            <option value="'Exo 2', sans-serif">Exo 2</option>
+            <option value="'Chakra Petch', sans-serif">Chakra Petch</option>
+          </optgroup>
+          <optgroup label="— Bold / Display —">
+            <option value="'Archivo Black', sans-serif">Archivo Black</option>
+            <option value="'Anton', sans-serif">Anton</option>
+            <option value="'Bebas Neue', sans-serif">Bebas Neue</option>
+            <option value="'Oswald', sans-serif">Oswald</option>
+            <option value="'Russo One', sans-serif">Russo One</option>
+            <option value="'Black Ops One', sans-serif">Black Ops One</option>
+            <option value="'Bungee', sans-serif">Bungee</option>
+            <option value="'Righteous', sans-serif">Righteous</option>
+            <option value="'Teko', sans-serif">Teko</option>
+            <option value="'Rajdhani', sans-serif">Rajdhani</option>
+            <option value="'Play', sans-serif">Play</option>
+          </optgroup>
+          <optgroup label="— Retro / Pixel —">
+            <option value="'Press Start 2P', sans-serif">Press Start 2P</option>
+            <option value="'Silkscreen', sans-serif">Silkscreen</option>
+          </optgroup>
+          <optgroup label="— Mono / Artistic —">
+            <option value="'Major Mono Display', monospace">Major Mono Display</option>
+            <option value="'Space Mono', monospace">Space Mono</option>
+            <option value="'Cascadia Mono', monospace">Cascadia Mono</option>
+          </optgroup>
+          <optgroup label="— System —">
+            <option value="'Arial Black', sans-serif">Arial Black</option>
+            <option value="Impact, sans-serif">Impact</option>
+            <option value="'Segoe UI Black', 'Segoe UI', sans-serif">Segoe UI Black</option>
+            <option value="Futura, 'Century Gothic', sans-serif">Futura</option>
+            <option value="Helvetica, Arial, sans-serif">Helvetica</option>
+          </optgroup>
+        </select>
+      </div>
+      <div class="color-row"><label>Text color</label><input type="color" id="cText" value="#050505" /></div>
+      <div class="inline-row">
+        <div class="field">
+          <label>Size <span class="range-val" id="rvText">80</span></label>
+          <input type="range" id="textSize" min="12" max="80" value="80" />
+        </div>
+        <div class="field">
+          <label>Spacing <span class="range-val" id="rvLS">-1</span></label>
+          <input type="range" id="letterSp" min="-2" max="20" value="-1" />
+        </div>
+      </div>
+      <div class="field">
+        <label>Gap <span class="range-val" id="rvGap">19</span></label>
+        <input type="range" id="gap" min="0" max="80" value="19" />
+      </div>
+    </div>
+  </div>
+
+  <!-- Export -->
+  <div>
+    <div class="section-title" onclick="toggleSection(this)">Export</div>
+    <div class="section-body">
+      <div class="btn-row">
+        <button class="btn" onclick="exportPNG(1)">PNG</button>
+        <button class="btn sec" onclick="exportPNG(2)">PNG @2x</button>
+        <button class="btn sec" onclick="exportPNG(4)">PNG @4x</button>
+      </div>
+      <div style="margin-top:8px">
+        <button class="btn" onclick="copyJSON()" id="copyJsonBtn">Copy JSON</button>
+        <button class="btn sec" onclick="loadJSON()">Load JSON</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="preview-area" id="previewArea">
+  <div class="frame-wrap" id="frameWrap">
+    <div class="logo-scene" id="logoScene">
+      <div class="logo-anchor" id="logoAnchor">
+        <div class="letter-group p-group" id="pGroup"></div>
+        <div class="letter-group s-group" id="sGroup"></div>
+      </div>
+    </div>
+    <div class="logo-text" id="logoText">
+      <div class="line1" id="textLine1">PlayStation</div>
+      <div class="line2" id="textLine2"></div>
+    </div>
+  </div>
+</div>
+
+<canvas id="exportCanvas"></canvas>
+
+<script>
+const $ = id => document.getElementById(id);
+
+// Default segment colors
+const DEFAULT_P_COLORS = ['#df0024', '#df0024', '#df0024', '#df0024', '#df0024', '#df0024'];
+const DEFAULT_S_COLORS = ['#f3c300', '#00ac9f', '#2e6db4', '#f3c300', '#00ac9f', '#2e6db4'];
+const FB_P_COLORS = ['#2563EB', '#1d4ed8', '#60a5fa', '#3b82f6', '#2563EB', '#1e40af'];
+const FB_S_COLORS = ['#F59E0B', '#8B5CF6', '#2563EB', '#F59E0B', '#8B5CF6', '#2563EB'];
+
+// Current color state
+let pSegColors = [...DEFAULT_P_COLORS];
+let sSegColors = [...DEFAULT_S_COLORS];
+
+// ---- Segment clip-path math ----
+function getSegmentClipPath(index, total, angleDeg) {
+  if (total === 1) return 'none';
+
+  const theta = angleDeg * Math.PI / 180;
+  const ct = Math.cos(theta);
+  const st = Math.sin(theta);
+
+  // Project corners onto direction vector
+  const projs = [
+    0,                    // (0,0)
+    100 * ct,             // (100,0)
+    100 * st,             // (0,100)
+    100 * (ct + st)       // (100,100)
+  ];
+  const minP = Math.min(...projs);
+  const maxP = Math.max(...projs);
+  const range = maxP - minP;
+
+  if (range < 0.01) return 'none';
+
+  const p0 = minP + (index / total) * range;
+  const p1 = minP + ((index + 1) / total) * range;
+
+  const T = 500; // extend lines far beyond element
+
+  // Two points on boundary line p0
+  const a1x = p0 * ct - T * st;
+  const a1y = p0 * st + T * ct;
+  const a2x = p0 * ct + T * st;
+  const a2y = p0 * st - T * ct;
+
+  // Two points on boundary line p1
+  const b1x = p1 * ct + T * st;
+  const b1y = p1 * st - T * ct;
+  const b2x = p1 * ct - T * st;
+  const b2y = p1 * st + T * ct;
+
+  return `polygon(${a1x}% ${a1y}%, ${a2x}% ${a2y}%, ${b1x}% ${b1y}%, ${b2x}% ${b2y}%)`;
+}
+
+// ---- Section toggle ----
+function toggleSection(titleEl) {
+  titleEl.classList.toggle('collapsed');
+  const body = titleEl.nextElementSibling;
+  body.classList.toggle('collapsed');
+}
+
+// ---- Custom angle toggle ----
+function toggleCustomAngle(prefix) {
+  const dir = $(prefix + 'Dir').value;
+  $(prefix + 'CustomWrap').style.display = dir === 'custom' ? 'block' : 'none';
+}
+
+// ---- Build segment color pickers ----
+function buildSegColors(prefix) {
+  const count = parseInt($(prefix + 'Segs').value);
+  const container = $(prefix + 'Colors');
+  const colors = prefix === 'p' ? pSegColors : sSegColors;
+  container.innerHTML = '';
+
+  for (let i = 0; i < count; i++) {
+    const item = document.createElement('div');
+    item.className = 'seg-color-item';
+
+    const input = document.createElement('input');
+    input.type = 'color';
+    input.value = colors[i] || '#888888';
+    input.dataset.prefix = prefix;
+    input.dataset.index = i;
+    input.addEventListener('input', (e) => {
+      if (prefix === 'p') pSegColors[e.target.dataset.index] = e.target.value;
+      else sSegColors[e.target.dataset.index] = e.target.value;
+      render();
+    });
+
+    const label = document.createElement('label');
+    if (count <= 3) {
+      label.textContent = count === 1 ? 'color' : count === 2 ? (i === 0 ? 'left' : 'right') : ['left', 'mid', 'right'][i];
+    } else {
+      label.textContent = (i + 1) + '/' + count;
+    }
+
+    item.appendChild(input);
+    item.appendChild(label);
+    container.appendChild(item);
+  }
+}
+
+// ---- Get angle for a letter ----
+function getAngle(prefix) {
+  const dir = $(prefix + 'Dir').value;
+  if (dir === 'custom') return parseInt($(prefix + 'CustomAngle').value);
+  return parseInt(dir);
+}
+
+// ---- Measure text ----
+function measureChar(ch, font, size) {
+  const m = document.createElement('span');
+  m.style.fontFamily = font;
+  m.style.fontSize = size + 'px';
+  m.style.fontWeight = '900';
+  m.style.lineHeight = '0.85';
+  m.style.position = 'absolute';
+  m.style.visibility = 'hidden';
+  m.style.whiteSpace = 'nowrap';
+  m.textContent = ch;
+  document.body.appendChild(m);
+  const w = m.offsetWidth;
+  const h = m.offsetHeight;
+  document.body.removeChild(m);
+  return { w, h };
+}
+
+// ---- Presets ----
+const PRESETS = [
+  { name:"PS Original", pC:['#E60012','#3333CC','#E60012'], sC:['#F5AA1C','#00A651','#3366CC'], BG:"#000000", text:"#CCCCCC" },
+  { name:"FutureBuddy", pC:['#2563EB','#1d4ed8','#60a5fa'], sC:['#F59E0B','#8B5CF6','#2563EB'], BG:"#000000", text:"#CCCCCC" },
+  { name:"Ocean", pC:['#0077B6','#00B4D8','#03045E'], sC:['#00B4D8','#48CAE4','#0077B6'], BG:"#000000", text:"#CAF0F8" },
+  { name:"Mono White", pC:['#FFFFFF','#FFFFFF','#FFFFFF'], sC:['#FFFFFF','#FFFFFF','#FFFFFF'], BG:"#000000", text:"#FFFFFF" },
+  { name:"Neon", pC:['#FF006E','#FFBE0B','#8338EC'], sC:['#FFBE0B','#8338EC','#FF006E'], BG:"#000000", text:"#FB5607" },
+  { name:"Cyber", pC:['#00FF41','#39FF14','#00FF41'], sC:['#39FF14','#00FF41','#39FF14'], BG:"#0D0208", text:"#008F11" },
+  { name:"Sunset", pC:['#FF6B6B','#FFA07A','#FFD93D'], sC:['#FFA07A','#FFD93D','#FF6B6B'], BG:"#1A1A2E", text:"#E8E8E8" },
+];
+
+const presetsEl = $('presets');
+PRESETS.forEach(p => {
+  const el = document.createElement('div');
+  el.className = 'preset';
+  el.title = p.name;
+  el.innerHTML = `<div style="background:${p.pC[0]}"></div><div style="background:${p.sC[0]}"></div><div style="background:${p.sC[1] || p.sC[0]}"></div>`;
+  el.onclick = () => {
+    for (let i = 0; i < 6; i++) {
+      pSegColors[i] = p.pC[i % p.pC.length];
+      sSegColors[i] = p.sC[i % p.sC.length];
+    }
+    $('cBG').value = p.BG;
+    $('cText').value = p.text;
+    buildSegColors('p');
+    buildSegColors('s');
+    render();
+  };
+  presetsEl.appendChild(el);
+});
+
+function resetToPS() {
+  $('pChar').value = 'P'; $('sChar').value = 'S';
+  $('fontSel').value = "'PlayStation', sans-serif";
+  $('textFontSel').value = "'PlayStation', sans-serif";
+  $('pSegs').value = '1'; $('sSegs').value = '3';
+  $('pDir').value = '0'; $('sDir').value = '0';
+  pSegColors = ['#df0024', '#df0024', '#df0024', '#df0024', '#df0024', '#df0024'];
+  sSegColors = ['#f3c300', '#00ac9f', '#2e6db4', '#f3c300', '#00ac9f', '#2e6db4'];
+  $('cBG').value = '#000000'; $('cText').value = '#050505';
+  $('pRotY').value = -34; $('pRotZ').value = 1; $('pRotX').value = 0;
+  $('sRotX').value = 78; $('sRotY').value = -1; $('sRotZ').value = -27;
+  $('pOffsetX').value = 33; $('pOffsetY').value = 39; $('pOffsetZ').value = 4;
+  $('overlapX').value = 96; $('overlapY').value = -19; $('overlapZ').value = 0;
+  $('pSize').value = 307; $('sSize').value = 400;
+  $('scenePerspective').value = 2000; $('eyeHeight').value = 21;
+  $('line1').value = 'PlayStation'; $('line2').value = '';
+  $('textSize').value = 80; $('letterSp').value = -1; $('gap').value = 19;
+  $('frameShape').value = 'square'; $('frameSize').value = 400;
+  $('framePad').value = 30; $('frameBorder').value = 0;
+  $('frameBorderColor').value = '#aeff00'; $('frameBG').value = '#ffffff';
+  $('frameRadius').value = 40;
+  toggleCustomAngle('p'); toggleCustomAngle('s');
+  buildSegColors('p'); buildSegColors('s');
+  render();
+}
+
+function resetToFB() {
+  $('pChar').value = 'F'; $('sChar').value = 'B';
+  $('fontSel').value = "'PlayStation', sans-serif";
+  $('textFontSel').value = "'Orbitron', sans-serif";
+  $('pSegs').value = '3'; $('sSegs').value = '3';
+  $('pDir').value = '0'; $('sDir').value = '0';
+  pSegColors = ['#2563EB', '#1d4ed8', '#60a5fa', '#3b82f6', '#2563EB', '#1e40af'];
+  sSegColors = ['#F59E0B', '#8B5CF6', '#2563EB', '#F59E0B', '#8B5CF6', '#2563EB'];
+  $('cBG').value = '#000000'; $('cText').value = '#CCCCCC';
+  $('pRotY').value = -15; $('pRotZ').value = 0; $('pRotX').value = 0;
+  $('sRotX').value = 72; $('sRotY').value = 0; $('sRotZ').value = 0;
+  $('pOffsetX').value = 0; $('pOffsetY').value = 0; $('pOffsetZ').value = 0;
+  $('overlapX').value = 60; $('overlapY').value = 0; $('overlapZ').value = 0;
+  $('pSize').value = 240; $('sSize').value = 240;
+  $('scenePerspective').value = 900; $('eyeHeight').value = 40;
+  $('line1').value = 'FutureBuddy'; $('line2').value = '';
+  $('textSize').value = 36; $('letterSp').value = 6; $('gap').value = 20;
+  toggleCustomAngle('p'); toggleCustomAngle('s');
+  buildSegColors('p'); buildSegColors('s');
+  render();
+}
+
+// ---- Auto-uppercase ----
+$('pChar').addEventListener('input', e => { e.target.value = e.target.value.toUpperCase().slice(-1); render(); });
+$('sChar').addEventListener('input', e => { e.target.value = e.target.value.toUpperCase().slice(-1); render(); });
+
+// ---- Listen all ----
+document.querySelectorAll('input, select').forEach(el => el.addEventListener('input', render));
+
+// ---- RENDER ----
+function render() {
+  const pChar = $('pChar').value || 'P';
+  const sChar = $('sChar').value || 'S';
+  const font = $('fontSel').value;
+  const cBG = $('cBG').value;
+  const cText = $('cText').value;
+  const pSize = parseInt($('pSize').value);
+  const sSize = parseInt($('sSize').value);
+  const textSize = parseInt($('textSize').value);
+  const gapVal = parseInt($('gap').value);
+  const letterSp = parseInt($('letterSp').value);
+
+  const pRY = parseInt($('pRotY').value);
+  const pRZ = parseInt($('pRotZ').value);
+  const pRX = parseInt($('pRotX').value);
+  const sRX = parseInt($('sRotX').value);
+  const sRY = parseInt($('sRotY').value);
+  const sRZ = parseInt($('sRotZ').value);
+
+  const pOvX = parseInt($('pOffsetX').value);
+  const pOvY = parseInt($('pOffsetY').value);
+  const pOvZ = parseInt($('pOffsetZ').value);
+  const ovX = parseInt($('overlapX').value);
+  const ovY = parseInt($('overlapY').value);
+  const ovZ = parseInt($('overlapZ').value);
+  const persp = parseInt($('scenePerspective').value);
+  const eye = parseInt($('eyeHeight').value);
+
+  const pSegCount = parseInt($('pSegs').value);
+  const sSegCount = parseInt($('sSegs').value);
+  const pAngle = getAngle('p');
+  const sAngle = getAngle('s');
+
+  // Update range labels
+  $('rvPSize').textContent = pSize;
+  $('rvSSize').textContent = sSize;
+  $('rvPY').textContent = pRY; $('rvPZ').textContent = pRZ; $('rvPX').textContent = pRX;
+  $('rvSX').textContent = sRX; $('rvSY').textContent = sRY; $('rvSZ').textContent = sRZ;
+  $('rvPOvX').textContent = pOvX; $('rvPOvY').textContent = pOvY; $('rvPOvZ').textContent = pOvZ;
+  $('rvOvX').textContent = ovX; $('rvOvY').textContent = ovY; $('rvOvZ').textContent = ovZ;
+  $('rvPersp').textContent = persp; $('rvEye').textContent = eye;
+  $('rvText').textContent = textSize; $('rvLS').textContent = letterSp; $('rvGap').textContent = gapVal;
+  if ($('pCustomWrap').style.display !== 'none') $('rvPCA').textContent = pAngle;
+  if ($('sCustomWrap').style.display !== 'none') $('rvSCA').textContent = sAngle;
+
+  // Scene
+  const scene = $('logoScene');
+  scene.style.perspective = persp + 'px';
+  scene.style.perspectiveOrigin = `50% ${eye}%`;
+  $('previewArea').style.background = cBG;
+
+  // Measure
+  const pM = measureChar(pChar, font, pSize);
+  const sM = measureChar(sChar, font, sSize);
+
+  // ---- Build P letter segments ----
+  const pGroup = $('pGroup');
+  pGroup.innerHTML = '';
+  pGroup.style.width = pM.w + 'px';
+  pGroup.style.height = pM.h + 'px';
+  pGroup.style.transform = `translate3d(${pOvX}px, ${pOvY}px, ${pOvZ}px) rotateY(${pRY}deg) rotateX(${pRX}deg) rotateZ(${pRZ}deg)`;
+  pGroup.style.transformOrigin = 'bottom center';
+
+  for (let i = 0; i < pSegCount; i++) {
+    const seg = document.createElement('div');
+    seg.className = 'letter-segment';
+    seg.textContent = pChar;
+    seg.style.fontFamily = font;
+    seg.style.fontSize = pSize + 'px';
+    seg.style.color = pSegColors[i] || '#888';
+    seg.style.clipPath = getSegmentClipPath(i, pSegCount, pAngle);
+    seg.style.width = pM.w + 'px';
+    seg.style.height = pM.h + 'px';
+    pGroup.appendChild(seg);
+  }
+
+  // ---- Build S letter segments ----
+  const sGroup = $('sGroup');
+  sGroup.innerHTML = '';
+  sGroup.style.width = sM.w + 'px';
+  sGroup.style.height = sM.h + 'px';
+  sGroup.style.right = -(sM.w - ovX) + 'px';
+  sGroup.style.bottom = ovY + 'px';
+  sGroup.style.transform = `rotateX(${sRX}deg) rotateY(${sRY}deg) rotateZ(${sRZ}deg) translateZ(${ovZ}px)`;
+  sGroup.style.transformOrigin = 'bottom left';
+
+  for (let i = 0; i < sSegCount; i++) {
+    const seg = document.createElement('div');
+    seg.className = 'letter-segment';
+    seg.textContent = sChar;
+    seg.style.fontFamily = font;
+    seg.style.fontSize = sSize + 'px';
+    seg.style.color = sSegColors[i] || '#888';
+    seg.style.clipPath = getSegmentClipPath(i, sSegCount, sAngle);
+    seg.style.width = sM.w + 'px';
+    seg.style.height = sM.h + 'px';
+    sGroup.appendChild(seg);
+  }
+
+  // Text
+  const textFont = $('textFontSel').value;
+  const logoText = $('logoText');
+  logoText.style.marginTop = gapVal + 'px';
+  const t1 = $('textLine1');
+  t1.textContent = $('line1').value;
+  t1.style.fontFamily = textFont;
+  t1.style.fontSize = textSize + 'px';
+  t1.style.color = cText;
+  t1.style.letterSpacing = letterSp + 'px';
+  const t2 = $('textLine2');
+  t2.textContent = $('line2').value;
+  t2.style.fontFamily = textFont;
+  t2.style.fontSize = (textSize * 0.7) + 'px';
+  t2.style.color = cText;
+  t2.style.letterSpacing = (letterSp * 0.6) + 'px';
+  t2.style.display = $('line2').value ? 'block' : 'none';
+
+  // Frame
+  renderFrame();
+}
+
+function renderFrame() {
+  const shape = $('frameShape').value;
+  const fw = $('frameWrap');
+  const opts = $('frameOptions');
+
+  // Reset logo scene sizing
+  const scene = $('logoScene');
+
+  if (shape === 'none') {
+    opts.style.display = 'none';
+    fw.style.width = '';
+    fw.style.height = '';
+    fw.style.borderRadius = '';
+    fw.style.border = '';
+    fw.style.background = '';
+    fw.style.padding = '';
+    fw.style.overflow = '';
+    scene.style.width = '600px';
+    scene.style.height = '450px';
+    scene.style.minWidth = '';
+    return;
+  }
+
+  opts.style.display = 'block';
+  const size = parseInt($('frameSize').value);
+  const pad = parseInt($('framePad').value);
+  const bw = parseInt($('frameBorder').value);
+  const bc = $('frameBorderColor').value;
+  const bg = $('frameBG').value;
+  const radius = parseInt($('frameRadius').value);
+
+  $('rvFrameSize').textContent = size;
+  $('rvFramePad').textContent = pad;
+  $('rvFrameBorder').textContent = bw;
+  $('rvFrameRadius').textContent = radius;
+
+  const inner = size - pad * 2;
+  fw.style.width = size + 'px';
+  fw.style.height = size + 'px';
+  fw.style.padding = pad + 'px';
+  fw.style.background = bg;
+  fw.style.border = bw > 0 ? `${bw}px solid ${bc}` : 'none';
+  fw.style.overflow = 'hidden';
+
+  // Fit scene inside frame
+  scene.style.width = inner + 'px';
+  scene.style.height = (inner * 0.75) + 'px';
+  scene.style.minWidth = '0';
+
+  if (shape === 'square') {
+    fw.style.borderRadius = '0';
+  } else if (shape === 'rounded') {
+    fw.style.borderRadius = radius + 'px';
+  } else if (shape === 'circle') {
+    fw.style.borderRadius = '50%';
+  }
+
+  // Disable radius slider for non-rounded
+  $('frameRadius').disabled = shape !== 'rounded';
+  $('frameRadius').style.opacity = shape === 'rounded' ? '1' : '0.3';
+}
+
+// ---- EXPORT ----
+function exportPNG(scale) {
+  const pChar = $('pChar').value || 'P';
+  const sChar = $('sChar').value || 'S';
+  const font = $('fontSel').value;
+  const cBG = $('cBG').value;
+  const cText = $('cText').value;
+  const pSize = parseInt($('pSize').value);
+  const sSize = parseInt($('sSize').value);
+  const textSize = parseInt($('textSize').value);
+  const gapVal = parseInt($('gap').value);
+  const letterSp = parseInt($('letterSp').value);
+  const line1 = $('line1').value;
+  const line2 = $('line2').value;
+
+  const pRY = parseInt($('pRotY').value);
+  const sRX = parseInt($('sRotX').value);
+  const pOvX = parseInt($('pOffsetX').value);
+  const pOvY = parseInt($('pOffsetY').value);
+  const ovX = parseInt($('overlapX').value);
+
+  const pSegCount = parseInt($('pSegs').value);
+  const sSegCount = parseInt($('sSegs').value);
+  const pAngle = getAngle('p');
+  const sAngle = getAngle('s');
+
+  const canvas = $('exportCanvas');
+  const ctx = canvas.getContext('2d');
+
+  const fontFam = font.split(',')[0].replace(/'/g, '').trim();
+  const textFontVal = $('textFontSel').value;
+  const textFontFam = textFontVal.split(',')[0].replace(/'/g, '').trim();
+  const S = scale;
+  const pFontStr = `900 ${pSize * S}px ${fontFam}, sans-serif`;
+  const sFontStr = `900 ${sSize * S}px ${fontFam}, sans-serif`;
+  const textFontStr = `700 ${textSize * S}px ${textFontFam}, sans-serif`;
+  const text2FontStr = `400 ${Math.round(textSize * 0.7) * S}px ${textFontFam}, sans-serif`;
+
+  ctx.font = pFontStr;
+  const pW = ctx.measureText(pChar).width;
+  const pH = pSize * S * 0.85;
+  ctx.font = sFontStr;
+  const sW = ctx.measureText(sChar).width;
+  const sH = sSize * S * 0.85;
+  const sScaleY = Math.cos((sRX * Math.PI) / 180);
+  const pSkew = Math.tan((pRY * Math.PI) / 180) * 0.3;
+
+  const pad = 50 * S;
+  const logoW = pW + sW - ovX * S;
+
+  ctx.font = textFontStr;
+  const t1W = line1 ? ctx.measureText(line1).width : 0;
+  ctx.font = text2FontStr;
+  const t2W = line2 ? ctx.measureText(line2).width : 0;
+
+  const contentW = Math.max(logoW, t1W, t2W) + pad * 2;
+  const t1H = line1 ? textSize * S * 1.3 : 0;
+  const t2H = line2 ? textSize * S * 1.0 : 0;
+  const contentH = pH + gapVal * S + t1H + t2H + pad * 2;
+
+  // Frame settings
+  const frameShape = $('frameShape').value;
+  const frameSize = parseInt($('frameSize').value) * S;
+  const framePad = parseInt($('framePad').value) * S;
+  const frameBW = parseInt($('frameBorder').value) * S;
+  const frameBC = $('frameBorderColor').value;
+  const frameBGC = $('frameBG').value;
+  const frameR = parseInt($('frameRadius').value) * S;
+
+  const useFrame = frameShape !== 'none';
+  const totalW = useFrame ? frameSize + frameBW * 2 : contentW;
+  const totalH = useFrame ? frameSize + frameBW * 2 : contentH;
+
+  canvas.width = totalW;
+  canvas.height = totalH;
+
+  // Frame background + clipping
+  if (useFrame) {
+    // Draw border
+    if (frameBW > 0) {
+      ctx.fillStyle = frameBC;
+      if (frameShape === 'circle') {
+        ctx.beginPath();
+        ctx.arc(totalW / 2, totalH / 2, totalW / 2, 0, Math.PI * 2);
+        ctx.fill();
+      } else if (frameShape === 'rounded') {
+        roundRect(ctx, 0, 0, totalW, totalH, frameR + frameBW);
+        ctx.fillStyle = frameBC;
+        ctx.fill();
+      } else {
+        ctx.fillRect(0, 0, totalW, totalH);
+      }
+    }
+    // Clip to inner frame shape
+    ctx.save();
+    if (frameShape === 'circle') {
+      ctx.beginPath();
+      ctx.arc(totalW / 2, totalH / 2, frameSize / 2, 0, Math.PI * 2);
+      ctx.clip();
+    } else if (frameShape === 'rounded') {
+      roundRect(ctx, frameBW, frameBW, frameSize, frameSize, frameR);
+      ctx.clip();
+    } else {
+      ctx.beginPath();
+      ctx.rect(frameBW, frameBW, frameSize, frameSize);
+      ctx.clip();
+    }
+    ctx.fillStyle = frameBGC;
+    ctx.fillRect(0, 0, totalW, totalH);
+  } else {
+    ctx.fillStyle = cBG;
+    ctx.fillRect(0, 0, totalW, totalH);
+  }
+
+  // Center content in frame (or in canvas if no frame)
+  const offsetX = useFrame ? (totalW - contentW) / 2 : 0;
+  const offsetY = useFrame ? (totalH - contentH) / 2 : 0;
+  const logoX = offsetX + (contentW - logoW) / 2;
+  const baseY = offsetY + pad + pH;
+
+  // Helper: canvas clip for segment
+  function clipSegment(ctx, index, total, angleDeg, w, h) {
+    if (total <= 1) return;
+    const theta = angleDeg * Math.PI / 180;
+    const ct = Math.cos(theta);
+    const st = Math.sin(theta);
+
+    const projs = [0, w * ct, h * st, w * ct + h * st];
+    const minP = Math.min(...projs);
+    const maxP = Math.max(...projs);
+    const range = maxP - minP;
+    if (range < 0.01) return;
+
+    const p0 = minP + (index / total) * range;
+    const p1 = minP + ((index + 1) / total) * range;
+    const T = w + h + 500;
+
+    ctx.beginPath();
+    ctx.moveTo(p0 * ct - T * st, p0 * st + T * ct);
+    ctx.lineTo(p0 * ct + T * st, p0 * st - T * ct);
+    ctx.lineTo(p1 * ct + T * st, p1 * st - T * ct);
+    ctx.lineTo(p1 * ct - T * st, p1 * st + T * ct);
+    ctx.closePath();
+    ctx.clip();
+  }
+
+  // Draw S segments (behind P)
+  const sX = logoX + pW - ovX * S;
+  for (let i = 0; i < sSegCount; i++) {
+    ctx.save();
+    ctx.translate(sX, baseY);
+    ctx.transform(1, 0, 0, -sScaleY, 0, 0);
+    clipSegment(ctx, i, sSegCount, sAngle, sW, sSize * S);
+    ctx.font = sFontStr;
+    ctx.fillStyle = sSegColors[i] || '#888';
+    ctx.textBaseline = 'top';
+    ctx.fillText(sChar, 0, 0);
+    ctx.restore();
+  }
+
+  // Draw P segments (in front)
+  for (let i = 0; i < pSegCount; i++) {
+    ctx.save();
+    ctx.translate(logoX + pW / 2 + pOvX * S, baseY + pOvY * S);
+    ctx.transform(1, 0, pSkew, 1, 0, 0);
+    // Clip in pre-transform space, so measure from -pW/2
+    ctx.translate(-pW / 2, -pH);
+    clipSegment(ctx, i, pSegCount, pAngle, pW, pH);
+    ctx.translate(pW / 2, pH);
+    ctx.font = pFontStr;
+    ctx.fillStyle = pSegColors[i] || '#888';
+    ctx.textBaseline = 'bottom';
+    ctx.textAlign = 'center';
+    ctx.fillText(pChar, 0, 0);
+    ctx.restore();
+  }
+
+  // Text
+  const textBaseY = baseY + gapVal * S;
+  ctx.textAlign = 'center';
+  if (line1) {
+    ctx.font = textFontStr;
+    ctx.fillStyle = cText;
+    ctx.textBaseline = 'top';
+    try { ctx.letterSpacing = (letterSp * S) + 'px'; } catch(e) {}
+    ctx.fillText(line1, totalW / 2, textBaseY);
+  }
+  if (line2) {
+    ctx.font = text2FontStr;
+    ctx.fillStyle = cText;
+    ctx.globalAlpha = 0.6;
+    ctx.textBaseline = 'top';
+    ctx.fillText(line2, totalW / 2, textBaseY + t1H);
+    ctx.globalAlpha = 1;
+  }
+
+  // Restore frame clip
+  if (useFrame) ctx.restore();
+
+  const a = document.createElement('a');
+  a.download = `logo-${pChar}${sChar}-${scale}x.png`;
+  a.href = canvas.toDataURL('image/png');
+  a.click();
+}
+
+// Canvas rounded rect helper
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y);
+  ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+  ctx.lineTo(x + w, y + h - r);
+  ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  ctx.lineTo(x + r, y + h);
+  ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+  ctx.lineTo(x, y + r);
+  ctx.quadraticCurveTo(x, y, x + r, y);
+  ctx.closePath();
+}
+
+// ---- JSON Import/Export ----
+function getConfig() {
+  const pSegs = parseInt($('pSegs').value);
+  const sSegs = parseInt($('sSegs').value);
+  return {
+    pChar: $('pChar').value,
+    sChar: $('sChar').value,
+    font: $('fontSel').value,
+    textFont: $('textFontSel').value,
+    pSize: parseInt($('pSize').value),
+    sSize: parseInt($('sSize').value),
+    pSegs,
+    sSegs,
+    pColors: pSegColors.slice(0, pSegs),
+    sColors: sSegColors.slice(0, sSegs),
+    pDir: $('pDir').value,
+    sDir: $('sDir').value,
+    pCustomAngle: parseInt($('pCustomAngle').value),
+    sCustomAngle: parseInt($('sCustomAngle').value),
+    pRotY: parseInt($('pRotY').value),
+    pRotZ: parseInt($('pRotZ').value),
+    pRotX: parseInt($('pRotX').value),
+    pOffsetX: parseInt($('pOffsetX').value),
+    pOffsetY: parseInt($('pOffsetY').value),
+    pOffsetZ: parseInt($('pOffsetZ').value),
+    sRotX: parseInt($('sRotX').value),
+    sRotY: parseInt($('sRotY').value),
+    sRotZ: parseInt($('sRotZ').value),
+    overlapX: parseInt($('overlapX').value),
+    overlapY: parseInt($('overlapY').value),
+    overlapZ: parseInt($('overlapZ').value),
+    perspective: parseInt($('scenePerspective').value),
+    eyeHeight: parseInt($('eyeHeight').value),
+    bgColor: $('cBG').value,
+    textColor: $('cText').value,
+    line1: $('line1').value,
+    line2: $('line2').value,
+    textSize: parseInt($('textSize').value),
+    letterSpacing: parseInt($('letterSp').value),
+    gap: parseInt($('gap').value),
+    frameShape: $('frameShape').value,
+    frameSize: parseInt($('frameSize').value),
+    framePad: parseInt($('framePad').value),
+    frameBorder: parseInt($('frameBorder').value),
+    frameBorderColor: $('frameBorderColor').value,
+    frameBG: $('frameBG').value,
+    frameRadius: parseInt($('frameRadius').value),
+  };
+}
+
+function copyJSON() {
+  const json = JSON.stringify(getConfig(), null, 2);
+  navigator.clipboard.writeText(json).then(() => {
+    const btn = $('copyJsonBtn');
+    btn.textContent = 'Copied!';
+    btn.style.background = '#16a34a';
+    setTimeout(() => { btn.textContent = 'Copy JSON'; btn.style.background = ''; }, 1500);
+  });
+}
+
+function loadJSON() {
+  const json = prompt('Paste logo JSON:');
+  if (!json) return;
+  try {
+    const c = JSON.parse(json);
+    if (c.pChar) $('pChar').value = c.pChar;
+    if (c.sChar) $('sChar').value = c.sChar;
+    if (c.font) $('fontSel').value = c.font;
+    if (c.textFont) $('textFontSel').value = c.textFont;
+    if (c.pSize) $('pSize').value = c.pSize;
+    if (c.sSize) $('sSize').value = c.sSize;
+    if (c.pSegs) $('pSegs').value = c.pSegs;
+    if (c.sSegs) $('sSegs').value = c.sSegs;
+    if (c.pColors) { for (let i = 0; i < c.pColors.length; i++) pSegColors[i] = c.pColors[i]; }
+    if (c.sColors) { for (let i = 0; i < c.sColors.length; i++) sSegColors[i] = c.sColors[i]; }
+    if (c.pDir) $('pDir').value = c.pDir;
+    if (c.sDir) $('sDir').value = c.sDir;
+    if (c.pCustomAngle != null) $('pCustomAngle').value = c.pCustomAngle;
+    if (c.sCustomAngle != null) $('sCustomAngle').value = c.sCustomAngle;
+    if (c.pRotY != null) $('pRotY').value = c.pRotY;
+    if (c.pRotZ != null) $('pRotZ').value = c.pRotZ;
+    if (c.pRotX != null) $('pRotX').value = c.pRotX;
+    if (c.pOffsetX != null) $('pOffsetX').value = c.pOffsetX;
+    if (c.pOffsetY != null) $('pOffsetY').value = c.pOffsetY;
+    if (c.pOffsetZ != null) $('pOffsetZ').value = c.pOffsetZ;
+    if (c.sRotX != null) $('sRotX').value = c.sRotX;
+    if (c.sRotY != null) $('sRotY').value = c.sRotY;
+    if (c.sRotZ != null) $('sRotZ').value = c.sRotZ;
+    if (c.overlapX != null) $('overlapX').value = c.overlapX;
+    if (c.overlapY != null) $('overlapY').value = c.overlapY;
+    if (c.overlapZ != null) $('overlapZ').value = c.overlapZ;
+    if (c.perspective) $('scenePerspective').value = c.perspective;
+    if (c.eyeHeight) $('eyeHeight').value = c.eyeHeight;
+    if (c.bgColor) $('cBG').value = c.bgColor;
+    if (c.textColor) $('cText').value = c.textColor;
+    if (c.line1 != null) $('line1').value = c.line1;
+    if (c.line2 != null) $('line2').value = c.line2;
+    if (c.textSize) $('textSize').value = c.textSize;
+    if (c.letterSpacing != null) $('letterSp').value = c.letterSpacing;
+    if (c.gap != null) $('gap').value = c.gap;
+    if (c.frameShape) $('frameShape').value = c.frameShape;
+    if (c.frameSize) $('frameSize').value = c.frameSize;
+    if (c.framePad != null) $('framePad').value = c.framePad;
+    if (c.frameBorder != null) $('frameBorder').value = c.frameBorder;
+    if (c.frameBorderColor) $('frameBorderColor').value = c.frameBorderColor;
+    if (c.frameBG) $('frameBG').value = c.frameBG;
+    if (c.frameRadius != null) $('frameRadius').value = c.frameRadius;
+    toggleCustomAngle('p'); toggleCustomAngle('s');
+    buildSegColors('p'); buildSegColors('s');
+    render();
+  } catch(e) {
+    alert('Invalid JSON: ' + e.message);
+  }
+}
+
+// ---- Init ----
+buildSegColors('p');
+buildSegColors('s');
+render();
+
+// Re-render after fonts load (PlayStation font is async from CDNFonts)
+document.fonts.ready.then(() => render());
+window.addEventListener('load', () => render());
+</script>
+</body>
+</html>
